@@ -1,4 +1,5 @@
 # CODShaderScript
+CODShaderScript is a free Blender Plugin that allows for saving and dynamically loading shader maps and textures. It is built for all 3D assets exported from COD games.
 
 ## Discord
 Find me on [Scobalula's](https://github.com/Scobalula) - Discord (https://discord.gg/RyqyThu)
@@ -34,5 +35,3 @@ CODShaderScript does three things:
 - IO_Model_SEModel by DTZxPorter (.SEModel addon for Blender) https://github.com/dtzxporter/io_model_semodel
 - Parasyte by Scobablula (Utility) https://wiki.codmods.com/docs/parasyte/index
 - Greyhound by Scobalula (Asset Extraction) https://github.com/Scobalula/Greyhound
-
-### Using Greyhound
