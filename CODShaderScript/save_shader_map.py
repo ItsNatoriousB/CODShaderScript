@@ -53,12 +53,12 @@ ANIMATION_NODE_EDITOR = "an_AnimationNodeTree"
 
 
 
-class SAVEUESHADERSCRIPT_OT_save_shader_map(bpy.types.Operator):
+class SAVECODSHADERSCRIPT_OT_save_shader_map(bpy.types.Operator):
     #default name is for Roman Noodles label
     #text is changed for other Shader Map Types
     bl_label = "Save Shader Map"
     bl_description = "Save Current Shader Map as a Preset"
-    bl_idname = "saveueshaderscript.saveshadermap_operator"
+    bl_idname = "SAVECODSHADERSCRIPT.saveshadermap_operator"
     def execute(self, context):
   
 
@@ -70,7 +70,7 @@ class SAVEUESHADERSCRIPT_OT_save_shader_map(bpy.types.Operator):
         savetool = scene.save_tool
 
         if preset_name_exist(savetool.cust_map_name):
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
             message="The nodes preset name exists, please choose another name and try again.")
             return {'FINISHED'}
 
@@ -95,12 +95,12 @@ class SAVEUESHADERSCRIPT_OT_save_shader_map(bpy.types.Operator):
             nodes_list, links_list, img_textures_list, regex_props_txt, total_capture_groups, texture_type_capture_group_index = nodes_to_dict(tree, savetool)
         except emptySuffixError:
             warning_message = "Error: Delete the extra comma and/or space for suffixes before saving"
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
             log(warning_message)
             return {"FINISHED"}
         except captureGroupNotInRangeError:
             warning_message = "Error: Texture Type Index is invalid must 0 not 1 for 2 Total Capture Groups"
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
             log(warning_message)
             return {"FINISHED"}
         
@@ -615,7 +615,7 @@ def textures_to_list(savetool, nodes):
                 #Shader Map did not have a Node with the correctly named Node Name
                 #two brackets inner brackets converts to tuple .join needs a tuple
                 warning_message = "".join(("A node with Node Name: \"", node_name, "\" does not exist so the ", texture, " texture was not recorded to load!"))
-                bpy.ops.ueshaderscript.show_message(message = warning_message)
+                bpy.ops.codshaderscript.show_message(message = warning_message)
             
             #only record in the img_textures_dict and img_textures_list if the node exists
             #in the current shader setup
@@ -653,14 +653,14 @@ def textures_to_list(savetool, nodes):
             #notify user if they
             #did not fill in both the suffix and the node name
             warning_message = "".join(("The Node Name input is missing for texture: \"", texture, "\" so the texture was not recorded to load!"))
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
         
         #if suffix is missing but node name is there
         elif suffix == "" and node_name != "":
             #notify user if they
             #did not fill in both the suffix and the node name
             warning_message = "".join(("The Suffix input is missing for texture: \"", texture, "\" so the texture was not recorded to load!"))
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
 
         #if the suffix and node name is missing then this is the default state
         #so no warning message needs to be shown
@@ -672,17 +672,12 @@ def textures_to_list(savetool, nodes):
             img_textures_list.append(img_textures_dict)
         #-------------------------------end of nested function
 
-
-
-
     img_textures_list = []
     suffix_and_node_name_to_list(savetool.bc_suffix, savetool.bc_node_name, "diffuse")
-    suffix_and_node_name_to_list(savetool.orm_suffix, savetool.orm_node_name, "packed_orm")
     suffix_and_node_name_to_list(savetool.n_suffix, savetool.n_node_name, "normal")
     suffix_and_node_name_to_list(savetool.m_suffix, savetool.m_node_name, "transparency")
     suffix_and_node_name_to_list(savetool.bde_suffix, savetool.bde_node_name, "emissive")
     suffix_and_node_name_to_list(savetool.hm_suffix, savetool.hm_node_name, "height")
-    suffix_and_node_name_to_list(savetool.hair_gradient_suffix, savetool.hair_gradient_node_name, "hair_gradient")
     suffix_and_node_name_to_list(savetool.specular_suffix, savetool.specular_node_name, "specular")
     suffix_and_node_name_to_list(savetool.gloss_suffix, savetool.gloss_node_name, "gloss")
 
@@ -693,62 +688,14 @@ def textures_to_list(savetool, nodes):
     suffix_and_node_name_to_list(savetool.subsurface_suffix, savetool.subsurface_node_name, "subsurface")
     suffix_and_node_name_to_list(savetool.ambient_occlusion_suffix, savetool.ambient_occlusion_node_name, "ambient_occlusion")
     suffix_and_node_name_to_list(savetool.detail_n_suffix, savetool.detail_n_node_name, "detail_normal")
-    suffix_and_node_name_to_list(savetool.wpo_suffix, savetool.wpo_node_name, "world_position_offset")
     suffix_and_node_name_to_list(savetool.tint_suffix, savetool.tint_node_name, "tint")
     suffix_and_node_name_to_list(savetool.normal_detail_suffix, savetool.normal_detail_node_name, "normal_detail")
     suffix_and_node_name_to_list(savetool.roughness_detail_suffix, savetool.roughness_detail_node_name, "roughness_detail")
-    suffix_and_node_name_to_list(savetool.smoothness_suffix, savetool.smoothness_node_name, "smoothness")
-    suffix_and_node_name_to_list(savetool.edge_mask_suffix, savetool.edge_mask_node_name, "edge_mask")
     suffix_and_node_name_to_list(savetool.transmission_suffix, savetool.transmission_node_name, "transmission")
     suffix_and_node_name_to_list(savetool.clearcoat_suffix, savetool.clearcoat_node_name, "clearcoat")
     suffix_and_node_name_to_list(savetool.anisotropic_suffix, savetool.anisotropic_suffix_node_name, "anisotropic")
     suffix_and_node_name_to_list(savetool.sheen_suffix, savetool.sheen_node_name, "sheen")
     suffix_and_node_name_to_list(savetool.glass_mask_suffix, savetool.glass_mask_node_name, "glass_mask")
-
-    #splat + environment textures
-    suffix_and_node_name_to_list(savetool.splat_suffix, savetool.splat_node_name, "splat")
-    suffix_and_node_name_to_list(savetool.red_bc_suffix, savetool.red_bc_node_name, "red_bc")
-    suffix_and_node_name_to_list(savetool.red_orm_suffix, savetool.red_orm_node_name, "red_orm")
-    suffix_and_node_name_to_list(savetool.red_n_suffix, savetool.red_n_node_name, "red_n")
-    suffix_and_node_name_to_list(savetool.red_e_suffix, savetool.red_e_node_name, "red_e")
-
-    suffix_and_node_name_to_list(savetool.green_bc_suffix, savetool.green_bc_node_name, "green_bc")
-    suffix_and_node_name_to_list(savetool.green_orm_suffix, savetool.green_orm_node_name, "green_orm")
-    suffix_and_node_name_to_list(savetool.green_n_suffix, savetool.green_n_node_name, "green_n")
-    suffix_and_node_name_to_list(savetool.green_e_suffix, savetool.green_e_node_name, "green_e")
-
-    suffix_and_node_name_to_list(savetool.blue_bc_suffix, savetool.blue_bc_node_name, "blue_bc")
-    suffix_and_node_name_to_list(savetool.blue_orm_suffix, savetool.blue_orm_node_name, "blue_orm")
-    suffix_and_node_name_to_list(savetool.blue_n_suffix, savetool.blue_n_node_name, "blue_n")
-    suffix_and_node_name_to_list(savetool.blue_e_suffix, savetool.blue_e_node_name, "blue_e")
-
-    suffix_and_node_name_to_list(savetool.cyan_bc_suffix, savetool.cyan_bc_node_name, "cyan_bc")
-    suffix_and_node_name_to_list(savetool.cyan_orm_suffix, savetool.cyan_orm_node_name, "cyan_orm")
-    suffix_and_node_name_to_list(savetool.cyan_n_suffix, savetool.cyan_n_node_name, "cyan_n")
-    suffix_and_node_name_to_list(savetool.cyan_e_suffix, savetool.cyan_e_node_name, "cyan_e")
-
-    suffix_and_node_name_to_list(savetool.alpha_bc_suffix, savetool.alpha_bc_node_name, "alpha_bc")
-    suffix_and_node_name_to_list(savetool.alpha_orm_suffix, savetool.alpha_orm_node_name, "alpha_orm")
-    suffix_and_node_name_to_list(savetool.alpha_n_suffix, savetool.alpha_n_node_name, "alpha_n")
-    suffix_and_node_name_to_list(savetool.alpha_e_suffix, savetool.alpha_e_node_name, "alpha_e")
-
-    suffix_and_node_name_to_list(savetool.moss_bc_suffix, savetool.moss_bc_node_name, "moss_bc")
-    suffix_and_node_name_to_list(savetool.moss_orm_suffix, savetool.moss_orm_node_name, "moss_orm")
-    suffix_and_node_name_to_list(savetool.moss_mask_suffix, savetool.moss_mask_node_name, "moss_mask")
-
-    suffix_and_node_name_to_list(savetool.leaves_bc_suffix, savetool.leaves_bc_node_name, "leaves_bc")
-    suffix_and_node_name_to_list(savetool.leaves_orm_suffix, savetool.leaves_orm_node_name, "leaves_orm")
-    suffix_and_node_name_to_list(savetool.leaves_mask_suffix, savetool.leaves_mask_node_name, "leaves_mask")
-
-    suffix_and_node_name_to_list(savetool.dirt_bc_suffix, savetool.dirt_bc_node_name, "dirt_bc")
-    suffix_and_node_name_to_list(savetool.dirt_orm_suffix, savetool.dirt_orm_node_name, "dirt_orm")
-    suffix_and_node_name_to_list(savetool.dirt_mask_suffix, savetool.dirt_mask_node_name, "dirt_mask")
-
-    #tint textures
-    suffix_and_node_name_to_list(savetool.tint_base_diffuse_suffix, savetool.tint_base_diffuse_node_name, "tint_base_diffuse")
-    suffix_and_node_name_to_list(savetool.tint_mask_suffix, savetool.tint_mask_node_name, "tint_mask")
-    suffix_and_node_name_to_list(savetool.tint_mask_suffix_2, savetool.tint_mask_node_name_2, "tint_mask_2")
-    suffix_and_node_name_to_list(savetool.hair_tint_id_suffix, savetool.hair_tint_id_node_name, "hair_tint_id")
 
     #skin bump texture is always added and is found from the user chosen path
     #not from the exported game folder
@@ -757,7 +704,6 @@ def textures_to_list(savetool, nodes):
     suffix_and_node_name_to_list(savetool.cust3_suffix, savetool.cust3_node_name, "cust3")
     suffix_and_node_name_to_list(savetool.cust4_suffix, savetool.cust4_node_name, "cust4")
 
-   
     #if the img_textures list is empty
     #that is equivalent to having 
     #no image textures to load
@@ -768,15 +714,11 @@ def textures_to_list(savetool, nodes):
     
     return img_textures_list
 
-
 #this class is just used as a custom error
 #so can get out of any depth
 #and stop preset being created
 class emptySuffixError(Exception):
     pass
-
-
-
 
 
 #---------------------------Panel related code including preset and folder new , deletion, renaming 
@@ -795,8 +737,6 @@ class SaveProperties(bpy.types.PropertyGroup):
     bde_node_name: bpy.props.StringProperty(name="Emissions Map Node Name", description="Emissions Map image texture node name", default="Emissions Map Node")
     hm_suffix: bpy.props.StringProperty(name="Height Map Suffix", description="Suffix of Height Map", default="")
     hm_node_name: bpy.props.StringProperty(name="Height Map Node Name", description="Height Map image texture node name", default="")
-    hair_gradient_suffix: bpy.props.StringProperty(name="Hair Gradient Map Suffix", description="Suffix of Hair Gradient Map", default="")
-    hair_gradient_node_name: bpy.props.StringProperty(name="Hair Gradient Map Node Name", description="Hair Gradient Map image texture node name", default="")
     specular_suffix: bpy.props.StringProperty(name="Specular Map Suffix", description="Suffix of Specular Map", default="")
     specular_node_name: bpy.props.StringProperty(name="Specular Map Node Name", description="Specular Map image texture node name", default="")
     gloss_suffix: bpy.props.StringProperty(name="Gloss Map Suffix", description="Suffix of Gloss Map", default="")
@@ -820,9 +760,6 @@ class SaveProperties(bpy.types.PropertyGroup):
     detail_n_suffix: bpy.props.StringProperty(name="Detail Normal Map Suffix", description="Suffix of Detail Normal Map")
     detail_n_node_name: bpy.props.StringProperty(name="Detail Normal Map Node Name", description="Detail Normal Map image texture node name")
 
-    wpo_suffix: bpy.props.StringProperty(name="World Position Offset Suffix", description="Suffix of World Position Offset", default="")
-    wpo_node_name: bpy.props.StringProperty(name="World Position Offset Node Name", description="World Position Offset image texture node name", default="")
-
     tint_suffix: bpy.props.StringProperty(name="Tint Suffix", description="Suffix of Tint", default="")
     tint_node_name: bpy.props.StringProperty(name="Tint Node Name", description="Tint image texture node name", default="")
     normal_detail_suffix: bpy.props.StringProperty(name="Normal Detail Suffix", description="Suffix of Normal Detail", default="")
@@ -830,10 +767,6 @@ class SaveProperties(bpy.types.PropertyGroup):
     roughness_detail_suffix: bpy.props.StringProperty(name="Roughness Detail Suffix", description="Suffix of Roughness Detail", default="")
     roughness_detail_node_name: bpy.props.StringProperty(name="Roughness Detail Node Name", description="Roughness Detail image texture node name", default="")
 
-    smoothness_suffix: bpy.props.StringProperty(name="Smoothness Suffix", description="Suffix of Smoothness", default="")
-    smoothness_node_name: bpy.props.StringProperty(name="Smoothness Node Name", description="Smoothness image texture node name", default="")
-    edge_mask_suffix: bpy.props.StringProperty(name="Edge Mask Suffix", description="Suffix of Edge Mask", default="")
-    edge_mask_node_name: bpy.props.StringProperty(name="Edge Mask Node Name", description="Edge Mask image texture node name", default="")
     transmission_suffix: bpy.props.StringProperty(name="Transmission Suffix", description="Suffix of Transmission", default="")
     transmission_node_name: bpy.props.StringProperty(name="Transmission Node Name", description="Transmission image texture node name", default="")
     clearcoat_suffix: bpy.props.StringProperty(name="Clearcoat Suffix", description="Suffix of Clearcoat", default="")
@@ -845,47 +778,6 @@ class SaveProperties(bpy.types.PropertyGroup):
     glass_mask_suffix: bpy.props.StringProperty(name="Glass Mask Suffix", description="Suffix of Glass Mask", default="")
     glass_mask_node_name: bpy.props.StringProperty(name="Glass Mask Node Name", description="Glass Mask image texture node name", default="")
 
-    #splat + environment textures
-    is_show_env_textures: bpy.props.BoolProperty(name="Show Environment + Suffix Suffix and Node Names", default= False)
-    splat_suffix: bpy.props.StringProperty(name="Splat Suffix", description="Suffix of Splat", default="")
-    splat_node_name: bpy.props.StringProperty(name="Splat Node Name", description="Splat image texture node name", default="")
-
-    red_bc_suffix: bpy.props.StringProperty(name="Red Diffuse Suffix", description="Suffix of Red Diffuse", default="")
-    red_bc_node_name: bpy.props.StringProperty(name="Red Diffuse Node Name", description="Red Diffuse image texture node name", default="")
-    red_orm_suffix: bpy.props.StringProperty(name="Red Packed RGB ARM Suffix", description="Suffix of Red Packed RGB ARM", default="")
-    red_orm_node_name: bpy.props.StringProperty(name="Red Packed RGB ARM Node Name", description="Red Packed RGB ARM image texture node name", default="")
-    red_n_suffix: bpy.props.StringProperty(name="Red Normal Suffix", description="Suffix of Red Normal", default="")
-    red_n_node_name: bpy.props.StringProperty(name="Red Normal Node Name", description="Red Normal image texture node name", default="")
-    red_e_suffix: bpy.props.StringProperty(name="Red Emissions Map Suffix", description="Suffix of Red Emissions Map")
-    red_e_node_name: bpy.props.StringProperty(name="Red Emissions Map Node Name", description="Red Emissions Map image texture node name")
-
-    green_bc_suffix: bpy.props.StringProperty(name="Green Diffuse Suffix", description="Suffix of Green Diffuse", default="")
-    green_bc_node_name: bpy.props.StringProperty(name="Green Diffuse Node Name", description="Green Diffuse image texture node name", default="")
-    green_orm_suffix: bpy.props.StringProperty(name="Green Packed RGB ARM Suffix", description="Suffix of Green Packed RGB ARM", default="")
-    green_orm_node_name: bpy.props.StringProperty(name="Green Packed RGB ARM Node Name", description="Green Packed RGB ARM image texture node name", default="")
-    green_n_suffix: bpy.props.StringProperty(name="Green Normal Suffix", description="Suffix of Green Normal", default="")
-    green_n_node_name: bpy.props.StringProperty(name="Green Normal Node Name", description="Green Normal image texture node name", default="")
-    green_e_suffix: bpy.props.StringProperty(name="Green Emissions Map Suffix", description="Suffix of Green Emissions Map")
-    green_e_node_name: bpy.props.StringProperty(name="Green Emissions Map Node Name", description="Green Emissions Map image texture node name")
-
-    blue_bc_suffix: bpy.props.StringProperty(name="Blue Diffuse Suffix", description="Suffix of Blue Diffuse", default="")
-    blue_bc_node_name: bpy.props.StringProperty(name="Blue Diffuse Node Name", description="Blue Diffuse image texture node name", default="")
-    blue_orm_suffix: bpy.props.StringProperty(name="Blue Packed RGB ARM Suffix", description="Suffix of Blue Packed RGB ARM", default="")
-    blue_orm_node_name: bpy.props.StringProperty(name="Blue Packed RGB ARM Node Name", description="Blue Packed RGB ARM image texture node name", default="")
-    blue_n_suffix: bpy.props.StringProperty(name="Blue Normal Suffix", description="Suffix of Blue Normal", default="")
-    blue_n_node_name: bpy.props.StringProperty(name="Blue Normal Node Name", description="Blue Normal image texture node name", default="")
-    blue_e_suffix: bpy.props.StringProperty(name="Blue Emissions Map Suffix", description="Suffix of Blue Emissions Map")
-    blue_e_node_name: bpy.props.StringProperty(name="Blue Emissions Map Node Name", description="Blue Emissions Map image texture node name")
-
-    cyan_bc_suffix: bpy.props.StringProperty(name="Cyan Diffuse Suffix", description="Suffix of Cyan Diffuse", default="")
-    cyan_bc_node_name: bpy.props.StringProperty(name="Cyan Diffuse Node Name", description="Cyan Diffuse image texture node name", default="")
-    cyan_orm_suffix: bpy.props.StringProperty(name="Cyan Packed RGB ARM Suffix", description="Suffix of Cyan Packed RGB ARM", default="")
-    cyan_orm_node_name: bpy.props.StringProperty(name="Cyan Packed RGB ARM Node Name", description="Cyan Packed RGB ARM image texture node name", default="")
-    cyan_n_suffix: bpy.props.StringProperty(name="Cyan Normal Suffix", description="Suffix of Cyan Normal", default="")
-    cyan_n_node_name: bpy.props.StringProperty(name="Cyan Normal Node Name", description="Cyan Normal image texture node name", default="")
-    cyan_e_suffix: bpy.props.StringProperty(name="Cyan Emissions Map Suffix", description="Suffix of Cyan Emissions Map")
-    cyan_e_node_name: bpy.props.StringProperty(name="Cyan Emissions Map Node Name", description="Cyan Emissions Map image texture node name")
-
     alpha_bc_suffix: bpy.props.StringProperty(name="Alpha Diffuse Suffix", description="Suffix of Alpha Diffuse", default="")
     alpha_bc_node_name: bpy.props.StringProperty(name="Alpha Diffuse Node Name", description="Alpha Diffuse image texture node name", default="")
     alpha_orm_suffix: bpy.props.StringProperty(name="Alpha Packed RGB ARM Suffix", description="Suffix of Alpha Packed RGB ARM", default="")
@@ -894,42 +786,7 @@ class SaveProperties(bpy.types.PropertyGroup):
     alpha_n_node_name: bpy.props.StringProperty(name="Alpha Normal Node Name", description="Alpha Normal image texture node name", default="")
     alpha_e_suffix: bpy.props.StringProperty(name="Alpha Emissions Map Suffix", description="Suffix of Alpha Emissions Map")
     alpha_e_node_name: bpy.props.StringProperty(name="Alpha Emissions Map Node Name", description="Alpha Emissions Map image texture node name")
-
-    moss_bc_suffix: bpy.props.StringProperty(name="Moss Diffuse Suffix", description="Suffix of Moss Diffuse", default="")
-    moss_bc_node_name: bpy.props.StringProperty(name="Moss Diffuse Node Name", description="Moss Diffuse image texture node name", default="")
-    moss_orm_suffix: bpy.props.StringProperty(name="Moss Packed RGB ARM Suffix", description="Suffix of Moss Packed RGB ARM", default="")
-    moss_orm_node_name: bpy.props.StringProperty(name="Moss Packed RGB ARM Node Name", description="Moss Packed RGB ARM image texture node name", default="")
-    moss_mask_suffix: bpy.props.StringProperty(name="Moss Mask Suffix", description="Suffix of Moss Mask", default="")
-    moss_mask_node_name: bpy.props.StringProperty(name="Moss Mask Node Name", description="Moss Mask image texture node name", default="")
-
-    leaves_bc_suffix: bpy.props.StringProperty(name="Leaves Diffuse Suffix", description="Suffix of Dirt", default="")
-    leaves_bc_node_name: bpy.props.StringProperty(name="Leaves Diffuse Node Name", description="Leaves Diffuse image texture node name", default="")
-    leaves_orm_suffix: bpy.props.StringProperty(name="Leaves Packed RGB ARM Suffix", description="Suffix of Leaves Packed RGB ARM", default="")
-    leaves_orm_node_name: bpy.props.StringProperty(name="Leaves Packed RGB ARM Node Name", description="Leaves Packed RGB ARM image texture node name", default="")
-    leaves_mask_suffix: bpy.props.StringProperty(name="Leaves Mask Suffix", description="Suffix of Leaves Mask", default="")
-    leaves_mask_node_name: bpy.props.StringProperty(name="Leaves Mask Node Name", description="Leaves Mask image texture node name", default="")
-
-    dirt_bc_suffix: bpy.props.StringProperty(name="Dirt Diffuse Suffix", description="Suffix of Dirt Diffuse", default="")
-    dirt_bc_node_name: bpy.props.StringProperty(name="Dirt Diffuse Node Name", description="Dirt Diffuse image texture node name", default="")
-    dirt_orm_suffix: bpy.props.StringProperty(name="Dirt Packed RGB ARM Suffix", description="Suffix of Dirt Packed RGB ARM", default="")
-    dirt_orm_node_name: bpy.props.StringProperty(name="Dirt Packed RGB ARM Node Name", description="Dirt Packed RGB ARM image texture node name", default="")
-    dirt_mask_suffix: bpy.props.StringProperty(name="Dirt Mask Suffix", description="Suffix of Dirt Mask", default="")
-    dirt_mask_node_name: bpy.props.StringProperty(name="Dirt Mask Node Name", description="Dirt Mask image texture node name", default="")
     
-
-    #tint textures
-    is_show_tint_textures: bpy.props.BoolProperty(name="Show Tint Suffix and Node Names", default= False)
-    #this is called base diffuse, because it is the color which is applied as
-    #a base before the tint is applied on top of the base color
-    tint_base_diffuse_suffix: bpy.props.StringProperty(name="Tint Base Diffuse Suffix", description="Suffix of Tint Base Diffuse Texture", default="")
-    tint_base_diffuse_node_name: bpy.props.StringProperty(name="Tint Base Diffuse Node Name", description="Tint Base Diffuse image texture node name", default="")
-    tint_mask_suffix: bpy.props.StringProperty(name="Tint Mask Suffix", description="Suffix of Tint Mask Texture", default="")
-    tint_mask_node_name: bpy.props.StringProperty(name="Tint Mask Node Name", description="Tint Mask image texture node name", default="")
-    tint_mask_suffix_2: bpy.props.StringProperty(name="Tint Mask Suffix 2", description="Suffix of Tint Mask 2 Texture", default="")
-    tint_mask_node_name_2: bpy.props.StringProperty(name="Tint Mask Node Name 2", description="Tint Mask 2 image texture node name", default="")
-    hair_tint_id_suffix: bpy.props.StringProperty(name="Hair Tint ID Suffix", description="Suffix of Hair Tint ID Texture", default="")
-    hair_tint_id_node_name: bpy.props.StringProperty(name="Hair Tint ID Node Name", description="Hair Tint image texture node name", default="")
-
     #custom textures
     is_show_custom_textures: bpy.props.BoolProperty(name="Show Custom Suffix and Node Names", default= False)
     cust1_suffix: bpy.props.StringProperty(name="Custom1 Suffix", description="Suffix of Custom1 Texture", default="")
@@ -1006,7 +863,7 @@ class SaveProperties(bpy.types.PropertyGroup):
 #----------------code for drawing main panel in the 3D View
 #don't register this class it is not a bpy panel or type so
 #it does not need to be registered
-class SAVEUESHADERSCRIPT_shared_main_panel:
+class SAVECODSHADERSCRIPT_shared_main_panel:
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Save UE Shaders"
@@ -1025,9 +882,9 @@ class SAVEUESHADERSCRIPT_shared_main_panel:
 #main panel 1
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
 #and poll function
-class SAVEUESHADERSCRIPT_PT_manage_presets_main_panel_1(SAVEUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class SAVECODSHADERSCRIPT_PT_manage_presets_main_panel_1(SAVECODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Manage Presets"
-    bl_idname = "SAVEUESHADERSCRIPT_PT_manage_presets_main_panel_1"
+    bl_idname = "SAVECODSHADERSCRIPT_PT_manage_presets_main_panel_1"
     
     def draw(self, context):
         layout = self.layout
@@ -1043,7 +900,7 @@ class SAVEUESHADERSCRIPT_PT_manage_presets_main_panel_1(SAVEUESHADERSCRIPT_share
         left.prop(preferences, 'folders', expand=False)
         right = row.column()
         right.alignment = "LEFT"
-        right.operator("ueshaderscript.folder_actions", text="", icon="MENU_PANEL")
+        right.operator("codshaderscript.folder_actions", text="", icon="MENU_PANEL")
 
         selected_folders_presets = get_selected_folder_presets()
         layout.label(text = "Your presets")
@@ -1053,29 +910,29 @@ class SAVEUESHADERSCRIPT_PT_manage_presets_main_panel_1(SAVEUESHADERSCRIPT_share
         left.template_list("SHADER_PRESETS_UL_items", "", selected_folders_presets,
                                "presets", selected_folders_presets, "preset_index", rows=5)
         col1 = right.row().column(align=True)
-        col1.operator("ueshaderscript.remove_preset",
+        col1.operator("codshaderscript.remove_preset",
                         text="Remove", icon="REMOVE")
-        col1.operator("ueshaderscript.rename_preset",
+        col1.operator("codshaderscript.rename_preset",
                           text="Rename", icon="GREASEPENCIL")
-        col1.operator("ueshaderscript.move_preset",
+        col1.operator("codshaderscript.move_preset",
                         text="Move To...", icon="FILE_FOLDER")
         col2 = right.row().column(align=True)
-        col2.operator("ueshaderscript.move_preset_up",
+        col2.operator("codshaderscript.move_preset_up",
                         icon='TRIA_UP', text="Move Up")
-        col2.operator("ueshaderscript.move_preset_down",
+        col2.operator("codshaderscript.move_preset_down",
                         icon='TRIA_DOWN', text="Move Down")
         
-        layout.operator("ueshaderscript.import_append_presets")
-        layout.operator("ueshaderscript.export_presets")
-        layout.operator("ueshaderscript.reset_update_default_presets")
+        layout.operator("codshaderscript.import_append_presets")
+        layout.operator("codshaderscript.export_presets")
+        layout.operator("codshaderscript.reset_update_default_presets")
 
 
 #main panel 2
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
 #and poll function
-class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class SAVECODSHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVECODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Save a Custom Shader Map"
-    bl_idname = "SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2"
+    bl_idname = "SAVECODSHADERSCRIPT_PT_save_custom_preset_main_panel_2"
 
     def draw(self, context):
         layout = self.layout
@@ -1106,7 +963,7 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
             box.label(text = "Node Names can be found/changed by selecting an image texture node > Press n > Item > Name")
             box.label(text = "Separate different suffixes with a comma and space \", \"")
             box.prop(savetool, "default_suffix_enum")
-            box.operator("saveueshaderscript.load_default_suffixes_operator")
+            box.operator("SAVECODSHADERSCRIPT.load_default_suffixes_operator")
 
             #suffixes and node names
             box.prop(savetool, "bc_suffix")
@@ -1121,8 +978,6 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
             box.prop(savetool, "bde_node_name")
             box.prop(savetool, "hm_suffix")
             box.prop(savetool, "hm_node_name")
-            box.prop(savetool, "hair_gradient_suffix")
-            box.prop(savetool, "hair_gradient_node_name")
             box.prop(savetool, "specular_suffix")
             box.prop(savetool, "specular_node_name")
             box.prop(savetool, "gloss_suffix")
@@ -1144,18 +999,12 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
                 box.prop(savetool, "ambient_occlusion_node_name")
                 box.prop(savetool, "detail_n_suffix")
                 box.prop(savetool, "detail_n_node_name")
-                box.prop(savetool, "wpo_suffix")
-                box.prop(savetool, "wpo_node_name")
                 box.prop(savetool, "tint_suffix")
                 box.prop(savetool, "tint_node_name")
                 box.prop(savetool, "normal_detail_suffix")
                 box.prop(savetool, "normal_detail_node_name")
                 box.prop(savetool, "roughness_detail_suffix")
                 box.prop(savetool, "roughness_detail_node_name")
-                box.prop(savetool, "smoothness_suffix")
-                box.prop(savetool, "smoothness_node_name")
-                box.prop(savetool, "edge_mask_suffix")
-                box.prop(savetool, "edge_mask_node_name")
                 box.prop(savetool, "transmission_suffix")
                 box.prop(savetool, "transmission_node_name")
                 box.prop(savetool, "clearcoat_suffix")
@@ -1166,85 +1015,6 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
                 box.prop(savetool, "sheen_node_name")
                 box.prop(savetool, "glass_mask_suffix")
                 box.prop(savetool, "glass_mask_suffix")
-
-            #environment + splat maps
-            box.prop(savetool, "is_show_env_textures")
-
-            if(savetool.is_show_env_textures == True):
-                box.prop(savetool, "splat_suffix")
-                box.prop(savetool, "splat_node_name")
-                box.prop(savetool, "red_bc_suffix")
-                box.prop(savetool, "red_bc_node_name")
-                box.prop(savetool, "red_orm_suffix")
-                box.prop(savetool, "red_orm_node_name")
-                box.prop(savetool, "red_n_suffix")
-                box.prop(savetool, "red_n_node_name")
-                box.prop(savetool, "red_e_suffix")
-                box.prop(savetool, "red_e_node_name")
-                box.prop(savetool, "green_bc_suffix")
-                box.prop(savetool, "green_bc_node_name")
-                box.prop(savetool, "green_orm_suffix")
-                box.prop(savetool, "green_orm_node_name")
-                box.prop(savetool, "green_n_suffix")
-                box.prop(savetool, "green_n_node_name")
-                box.prop(savetool, "green_e_suffix")
-                box.prop(savetool, "green_e_node_name")
-                box.prop(savetool, "blue_bc_suffix")
-                box.prop(savetool, "blue_bc_node_name")
-                box.prop(savetool, "blue_orm_suffix")
-                box.prop(savetool, "blue_orm_node_name")
-                box.prop(savetool, "blue_n_suffix")
-                box.prop(savetool, "blue_n_node_name")
-                box.prop(savetool, "blue_e_suffix")
-                box.prop(savetool, "blue_e_node_name")
-                box.prop(savetool, "cyan_bc_suffix")
-                box.prop(savetool, "cyan_bc_node_name")
-                box.prop(savetool, "cyan_orm_suffix")
-                box.prop(savetool, "cyan_orm_node_name")
-                box.prop(savetool, "cyan_n_suffix")
-                box.prop(savetool, "cyan_n_node_name")
-                box.prop(savetool, "cyan_e_suffix")
-                box.prop(savetool, "cyan_e_node_name")
-                box.prop(savetool, "alpha_bc_suffix")
-                box.prop(savetool, "alpha_bc_node_name")
-                box.prop(savetool, "alpha_orm_suffix")
-                box.prop(savetool, "alpha_orm_node_name")
-                box.prop(savetool, "alpha_n_suffix")
-                box.prop(savetool, "alpha_n_node_name")
-                box.prop(savetool, "alpha_e_suffix")
-                box.prop(savetool, "alpha_e_node_name")
-                box.prop(savetool, "moss_bc_suffix")
-                box.prop(savetool, "moss_bc_node_name")
-                box.prop(savetool, "moss_orm_suffix")
-                box.prop(savetool, "moss_orm_node_name")
-                box.prop(savetool, "moss_mask_suffix")
-                box.prop(savetool, "moss_mask_node_name")
-                box.prop(savetool, "leaves_bc_suffix")
-                box.prop(savetool, "leaves_bc_node_name")
-                box.prop(savetool, "leaves_orm_suffix")
-                box.prop(savetool, "leaves_orm_node_name")
-                box.prop(savetool, "leaves_mask_suffix")
-                box.prop(savetool, "leaves_mask_node_name")
-                box.prop(savetool, "dirt_bc_suffix")
-                box.prop(savetool, "dirt_bc_node_name")
-                box.prop(savetool, "dirt_orm_suffix")
-                box.prop(savetool, "dirt_orm_node_name")
-                box.prop(savetool, "dirt_mask_suffix")
-                box.prop(savetool, "dirt_mask_node_name")
-
-
-            #tint texture inputs
-            box.prop(savetool, "is_show_tint_textures")
-
-            if(savetool.is_show_tint_textures):
-                box.prop(savetool, "tint_base_diffuse_suffix")
-                box.prop(savetool, "tint_base_diffuse_node_name")
-                box.prop(savetool, "tint_mask_suffix")
-                box.prop(savetool, "tint_mask_node_name")
-                box.prop(savetool, "tint_mask_suffix_2")
-                box.prop(savetool, "tint_mask_node_name_2")
-                box.prop(savetool, "hair_tint_id_suffix")
-                box.prop(savetool, "hair_tint_id_node_name")
 
             #custom texture inputs
             box.prop(savetool, "is_show_custom_textures")
@@ -1269,7 +1039,7 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
                 box.label(text = "Regular Expression Method")
                 box.label(text = "How the texture and type of Texture is found in props.txt files")
                 box.prop(savetool, "default_regex_props_txt_enum")
-                box.operator("saveueshaderscript.load_default_regexes_operator")
+                box.operator("SAVECODSHADERSCRIPT.load_default_regexes_operator")
 
                 box.label(text = "Regular Expression can only have 1 or 2 capture groups")
                 box.prop(savetool, "regex_props_txt")
@@ -1277,10 +1047,10 @@ class SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2(SAVEUESHADERSCRIPT_s
                 box.prop(savetool, "texture_type_capture_group_index")
 
 
-            box.operator("SAVEUESHADERSCRIPT.reset_inputs_main_panel_operator")
+            box.operator("SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator")
 
 
-        layout.operator("SAVEUESHADERSCRIPT.saveshadermap_operator")
+        layout.operator("SAVECODSHADERSCRIPT.saveshadermap_operator")
 
 
 #this class is the list to be displayed in the main panel
@@ -1304,17 +1074,17 @@ class SHADER_MT_FolderActionsMenu(bpy.types.Menu):
         # This fix below operators not working properly
         layout.operator_context = 'INVOKE_DEFAULT'
         row = layout.row()
-        row.operator("ueshaderscript.new_folder", text="Add New Folder", icon="ADD")
+        row.operator("codshaderscript.new_folder", text="Add New Folder", icon="ADD")
         row = layout.row()
-        row.operator("ueshaderscript.remove_folder",
+        row.operator("codshaderscript.remove_folder",
                      text="Remove Selected Folder", icon="REMOVE")
         row = layout.row()
-        row.operator("ueshaderscript.rename_folder",
+        row.operator("codshaderscript.rename_folder",
                      text="Rename Selected Folder", icon="EVENT_R")
 
 
 class Shader_ShowFolderActionsOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.folder_actions"
+    bl_idname = "codshaderscript.folder_actions"
     bl_label = ""
     bl_description = "Show Message for Node Kit"
     bl_options = {'REGISTER'}
@@ -1329,7 +1099,7 @@ class Shader_ShowFolderActionsOperator(bpy.types.Operator):
 
 
 class Shader_NewFolderOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.new_folder"
+    bl_idname = "codshaderscript.new_folder"
     bl_label = "New Folder"
     bl_description = "New Folder"
     folder_name: bpy.props.StringProperty(name="")
@@ -1347,7 +1117,7 @@ class Shader_NewFolderOperator(bpy.types.Operator):
 
     def execute(self, context):
         if folder_name_exist(self.folder_name):
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
                 message="The folder name exists, please choose another name and try again.")
             return {'FINISHED'}
         pref = get_preferences()
@@ -1368,7 +1138,7 @@ class Shader_NewFolderOperator(bpy.types.Operator):
 #buttons for changing preset order renaming and moving presets between folders
 
 class RenamePresetOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.rename_preset"
+    bl_idname = "codshaderscript.rename_preset"
     bl_label = "Rename Preset"
     bl_description = "Rename Preset"
     bl_options = {'REGISTER'}
@@ -1382,7 +1152,7 @@ class RenamePresetOperator(bpy.types.Operator):
         selected_folder_presets = get_selected_folder_presets()
         index = selected_folder_presets.preset_index
         if index < 0:
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
                 message="Please choose a nodes preset to rename.")
             return {'FINISHED'}
         preset = selected_folder_presets.presets[index]
@@ -1403,7 +1173,7 @@ class RenamePresetOperator(bpy.types.Operator):
         if index < 0:
             return {'FINISHED'}
         if preset_name_exist(self.preset_name):
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
                 message="The nodes preset name exists, please choose another name and try again.")
             return {'FINISHED'}
         preset = selected_folder_presets.presets[index]
@@ -1414,7 +1184,7 @@ class RenamePresetOperator(bpy.types.Operator):
 
 
 class MovePresetUpOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.move_preset_up"
+    bl_idname = "codshaderscript.move_preset_up"
     bl_label = "Move Selected Preset Up"
     bl_description = "Move Selected Preset Up"
     bl_options = {'REGISTER'}
@@ -1441,7 +1211,7 @@ def exchange_preset(a, b):
     selected_folder_presets.presets.move(a, b)
 
 class MovePresetDownOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.move_preset_down"
+    bl_idname = "codshaderscript.move_preset_down"
     bl_label = "Move Selected Preset Down"
     bl_description = "Move Selected Preset Down"
     bl_options = {'REGISTER'}
@@ -1473,7 +1243,7 @@ def get_folders_items(self, context):
 
 
 class MovePresetOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.move_preset"
+    bl_idname = "codshaderscript.move_preset"
     bl_label = "Move Selected Preset to Folder"
     bl_description = "Move Selected Preset to Folder"
     bl_options = {'REGISTER'}
@@ -1501,11 +1271,11 @@ class MovePresetOperator(bpy.types.Operator):
         selected_folder_presets = get_selected_folder_presets()
         selected_preset = get_selected_preset()
         if selected_preset is None:
-            bpy.ops.ueshaderscript.show_message(message="No preset selected")
+            bpy.ops.codshaderscript.show_message(message="No preset selected")
             return {'FINISHED'}
         target_folder = get_folder_presets_by_index(self.folders)
         if preset_name_exist_in_folder(target_folder.folder_name, selected_preset.name):
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
                 message="The nodes preset name exists in target folder, please rename it and try again.")
             return {'FINISHED'}
         target_folder_presets = target_folder.presets
@@ -1580,7 +1350,7 @@ def suggested_folder_name():
 
 
 class Shader_RemoveFolderOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.remove_folder"
+    bl_idname = "codshaderscript.remove_folder"
     bl_label = "Do you really want to remove selected folder?"
     bl_description = "Remove Folder"
 
@@ -1611,7 +1381,7 @@ def remove_folder(selected_folder_index):
             break
 
 class Shader_RenameFolderOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.rename_folder"
+    bl_idname = "codshaderscript.rename_folder"
     bl_label = "Rename Folder"
     bl_description = "Rename Folder"
     bl_options = {'REGISTER'}
@@ -1639,7 +1409,7 @@ class Shader_RenameFolderOperator(bpy.types.Operator):
     def execute(self, context):
         pref = get_preferences()
         if folder_name_exist(self.folder_name):
-            bpy.ops.ueshaderscript.show_message(
+            bpy.ops.codshaderscript.show_message(
                 message="The folder name exists, please choose another name and try again.")
             return {'FINISHED'}
         selected_folder_index = pref.folders
@@ -1685,8 +1455,8 @@ def layout_split(layout, factor=0.0, align=False):
 #--------end formatting functions for panels
 
 #remove preset button
-class SAVEUESHADERSCRIPT_OT_remove_preset(bpy.types.Operator):
-    bl_idname = "ueshaderscript.remove_preset"
+class SAVECODSHADERSCRIPT_OT_remove_preset(bpy.types.Operator):
+    bl_idname = "codshaderscript.remove_preset"
     bl_label = "Do you really want to remove selected preset?"
     bl_description = "Remove Preset"
     bl_options = {'REGISTER'}
@@ -1764,18 +1534,18 @@ def dict_to_string(d):
 
 
 def get_default_and_current_json_paths():
-    DEFAULT_PRESETS_JSON_FILE = "ue_shader_script_default_presets_json.json"
-    CURRENT_PRESETS_JSON_FILE = "ue_shader_script_current_presets_json.json"
+    DEFAULT_PRESETS_JSON_FILE = "cod_shader_script_default_presets.json"
+    CURRENT_PRESETS_JSON_FILE = "cod_shader_script_current_presets.json"
     
     #this gets the path of the currently running file
     #save_shader_map and then gets it's parent
     #and then converts the relative path into an absolute path
     #this is because if we just get pathlib.Path(__file__).absolute()
-    #we will get C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\UEShaderScript\save_shader_map.py
+    #we will get C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\CODShaderScript\save_shader_map.py
     #so we get the parent of it
-    #to get this C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\UEShaderScript\
+    #to get this C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\CODShaderScript\
     #so we can concatenate it to form
-    #C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\UEShaderScript\ue_shader_script_default_presets_json.json
+    #C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\CODShaderScript\cod_shader_script_default_presets.json
     path_lib = pathlib.Path(__file__).parent.absolute()
     #os.path.expanduser("~") expands the home directory which is C:\Users\seabr
     home = os.path.expanduser("~")
@@ -1791,7 +1561,7 @@ def get_default_and_current_json_paths():
 
 
 def import_current_or_default_json():
-    """Use this to import the current or default json file in ~/ue_shader_script_default_json or the plugin directory respectively"""
+    """Use this to import the current or default json file in ~/cod_shader_script_default_json or the plugin directory respectively"""
     current_presets_full_path, default_presets_full_path = get_default_and_current_json_paths()
     # try:
     #     with open(full_path) as f:
@@ -1981,7 +1751,7 @@ def json_string_to_update_default_presets(json_string, skip_autosave=False):
     save_pref()
 
     ui_message = "All presets were reset and updated successfully!"
-    bpy.ops.ueshaderscript.show_message(message = ui_message)
+    bpy.ops.codshaderscript.show_message(message = ui_message)
     log(ui_message)
     
 
@@ -2142,13 +1912,13 @@ class SavePreferences(bpy.types.AddonPreferences):
 
 #by default use __package__ however, if the function is being imported elsewhere to a different file
 #such as in the __init__ or load_shader_map.py file
-#the __package__ variable does not work, allow another parameter to override with the UEShaderScript string
+#the __package__ variable does not work, allow another parameter to override with the CODShaderScript string
 def get_preferences(isOverridePackage = False, package=__package__, context=None):
     """Multi version compatibility for getting preferences"""
     # if isOverridePackage:
     #     #debug
     #     #print("Override Package!!!!!")
-    #     package = "UEShaderScript"
+    #     package = "CODShaderScript"
 
     if not context:
         context = bpy.context
@@ -2161,7 +1931,7 @@ def get_preferences(isOverridePackage = False, package=__package__, context=None
         #debug
         #print("package:", package)
         #__package__ is the name of the folder that the add on is in
-        #it would be UEShaderScript for this one
+        #it would be CODShaderScript for this one
         #This line here gets a prefs struct which is not what we 
         #about we want the attribute preferences inside the prefs struct
         #this gets the current preferences so we can edit the current preferences
@@ -2242,7 +2012,7 @@ def presets_to_json_string():
 
 #button to reset and update default presets
 class ResetAndUpdateDefaultPresetsOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.reset_update_default_presets"
+    bl_idname = "codshaderscript.reset_update_default_presets"
     bl_label = "Reset & Update Default Presets"
     bl_description = "Reset & Update Default Presets"
 
@@ -2271,7 +2041,7 @@ def reset_and_update_default_presets():
 
 #--------------------------------------------import and export json files code
 class ImportAndAppendPresetsOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.import_append_presets"
+    bl_idname = "codshaderscript.import_append_presets"
     bl_label = "Import & Append Presets"
     bl_description = "Import & Append Presets"
 
@@ -2365,7 +2135,7 @@ def get_preset_by_name_if_exist_in_folder(folder_name, preset_name, preferences)
     return False, None
 
 class ExportPresetsOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.export_presets"
+    bl_idname = "codshaderscript.export_presets"
     bl_label = "Export Presets"
     bl_description = "Export Presets"
 
@@ -2400,9 +2170,9 @@ def report_error(self, message):
 
 
 class ShowMessageOperator(bpy.types.Operator):
-    bl_idname = "ueshaderscript.show_message"
+    bl_idname = "codshaderscript.show_message"
     bl_label = ""
-    bl_description = "Show Message for UEShaderScript"
+    bl_description = "Show Message for CODShaderScript"
     bl_options = {'REGISTER'}
     message: bpy.props.StringProperty(default="Message Dummy")
     called: bpy.props.BoolProperty(default=False)
@@ -2428,8 +2198,8 @@ class ShowMessageOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 #--------load default suffixes so don't need to type in all the suffixes and node names
-class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
-    bl_idname = "saveueshaderscript.load_default_suffixes_operator"
+class SAVECODSHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
+    bl_idname = "SAVECODSHADERSCRIPT.load_default_suffixes_operator"
     bl_label = "Load Preset Suffixes and Node Names"
     bl_description = "Load Preset Suffixes and Node Names"
     bl_options = {'REGISTER'}
@@ -2461,12 +2231,12 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
         if(default_suffix == "DBD_GENERAL"):
             #the dbd general suffix and node names are the default ones
             #so reset to the default inputs
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
 
         elif(default_suffix == "DBD_HAIR"):
             #We are using the reset to default operator so we do not
             #need to explicitly state all the suffix and node names 
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.orm_suffix = ""
             savetool.orm_node_name = ""
             savetool.bde_suffix = ""
@@ -2481,12 +2251,12 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             #need to explicitly state all the suffix and node names 
             #The skin preset is very similar to the default inputs except for the m_suffix,
             #and m_node_name
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.m_suffix = ""
             savetool.m_node_name = ""
 
         elif(default_suffix == "DBD_CLOTHING_TINT_RECOLOUR"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.bc_suffix = ""
             savetool.bc_node_name = ""
             savetool.is_show_tint_textures = True
@@ -2496,7 +2266,7 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             savetool.tint_mask_node_name = "Tint Mask Node"
         
         elif(default_suffix == "DBD_EYES"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.orm_suffix = ""
             savetool.orm_node_name = ""
             savetool.n_suffix = ""
@@ -2507,11 +2277,11 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             savetool.bde_node_name = ""
         
         elif(default_suffix == "DBD_ENVIRONMENT"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
 
 
         elif(default_suffix == "DBD_HAIR_TINT_RECOLOUR"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.bc_suffix = ""
             savetool.bc_node_name = ""
             savetool.is_show_tint_textures = True
@@ -2527,7 +2297,7 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             savetool.hair_gradient_node_name = "Hair Gradient Map Node"
 
         elif(default_suffix == "FNAF_SECURITY_BREACH_ENVIRONMENT"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.bc_suffix = "Albedo, D, Color Texture, BASECOLOR, AlbedoTexture, Base_Color, Tiling_Diffuse, Diffuse, BaseColor, albedo, DiffuseTexture"
             savetool.n_suffix = "Normal, N, Normal Texture, NORMAL_BASE_TEXTURE, MainNormalInput, normal, Tiling_Normal, NormalTexture"
             savetool.orm_suffix = "RMA, ORM Texture, AO_Rough_Metal, MergeMapInput, AORM, Roughenss & Metallic, PackedTexture, RAM, SRMH, surface_map, Surface_map, Reflection"
@@ -2535,7 +2305,7 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             savetool.bde_suffix = "EMISSION, Emissive"
         
         elif(default_suffix == "FORTNITE_BASIC"):
-            bpy.ops.saveueshaderscript.reset_inputs_main_panel_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator()
             savetool.bc_suffix = "Diffuse"
             savetool.n_suffix = "Normals"
             savetool.orm_suffix = "SpecularMasks"
@@ -2554,21 +2324,21 @@ class SAVEUESHADERSCRIPT_OT_load_default_suffixes(bpy.types.Operator):
             savetool.default_regex_props_txt_enum = "UE5_PARAMETER_INFO"
 
             #run the operation to load the default regex that has now been picked
-            bpy.ops.saveueshaderscript.load_default_regexes_operator()
+            bpy.ops.SAVECODSHADERSCRIPT.load_default_regexes_operator()
 
 
 
         else:
             error_message = "".join("Error: the default_suffix", default_suffix, "was not found, please contact the plugin author.")
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
 
         return {'FINISHED'}
 
 
 #--------load default suffixes so don't need to type in all the suffixes and node names
-class SAVEUESHADERSCRIPT_OT_load_default_regexes(bpy.types.Operator):
-    bl_idname = "saveueshaderscript.load_default_regexes_operator"
+class SAVECODSHADERSCRIPT_OT_load_default_regexes(bpy.types.Operator):
+    bl_idname = "SAVECODSHADERSCRIPT.load_default_regexes_operator"
     bl_label = "Load Preset Regular Expressions"
     bl_description = "Load Preset Regular Expressions"
     bl_options = {'REGISTER'}
@@ -2621,17 +2391,17 @@ class SAVEUESHADERSCRIPT_OT_load_default_regexes(bpy.types.Operator):
         
         else:
             error_message = "".join("Error: the default_regex_enum", default_regex_enum, "was not found, please contact the plugin author.")
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
 
         return {'FINISHED'}
 
 
 #--------reset save function main panel class
-class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
-    bl_idname = "saveueshaderscript.reset_inputs_main_panel_operator"
+class SAVECODSHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
+    bl_idname = "SAVECODSHADERSCRIPT.reset_inputs_main_panel_operator"
     bl_label = "Reset All Inputs to Default"
-    bl_description = "Reset Save Settings Main Panel for UEShaderScript"
+    bl_description = "Reset Save Settings Main Panel for CODShaderScript"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -2661,8 +2431,6 @@ class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
         savetool.property_unset("bde_node_name")
         savetool.property_unset("hm_suffix")
         savetool.property_unset("hm_node_name")
-        savetool.property_unset("hair_gradient_suffix")
-        savetool.property_unset("hair_gradient_node_name")
         savetool.property_unset("specular_suffix")
         savetool.property_unset("specular_node_name")
         savetool.property_unset("gloss_suffix")
@@ -2682,8 +2450,6 @@ class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
         savetool.property_unset("ambient_occlusion_node_name")
         savetool.property_unset("detail_n_suffix")
         savetool.property_unset("detail_n_node_name")
-        savetool.property_unset("wpo_suffix")
-        savetool.property_unset("wpo_node_name")
         savetool.property_unset("tint_suffix")
         savetool.property_unset("tint_node_name")
         savetool.property_unset("normal_detail_suffix")
@@ -2705,68 +2471,6 @@ class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
         savetool.property_unset("glass_mask_suffix")
         savetool.property_unset("glass_mask_suffix")
 
-        #splat + environment inputs
-        savetool.property_unset("splat_suffix")
-        savetool.property_unset("splat_node_name")
-        savetool.property_unset("red_bc_suffix")
-        savetool.property_unset("red_bc_node_name")
-        savetool.property_unset("red_orm_suffix")
-        savetool.property_unset("red_orm_node_name")
-        savetool.property_unset("red_n_suffix")
-        savetool.property_unset("red_n_node_name")
-        savetool.property_unset("red_e_suffix")
-        savetool.property_unset("red_e_node_name")
-        savetool.property_unset("green_bc_suffix")
-        savetool.property_unset("green_bc_node_name")
-        savetool.property_unset("green_orm_suffix")
-        savetool.property_unset("green_orm_node_name")
-        savetool.property_unset("green_n_suffix")
-        savetool.property_unset("green_n_node_name")
-        savetool.property_unset("green_e_suffix")
-        savetool.property_unset("green_e_node_name")
-        savetool.property_unset("blue_bc_suffix")
-        savetool.property_unset("blue_bc_node_name")
-        savetool.property_unset("blue_orm_suffix")
-        savetool.property_unset("blue_orm_node_name")
-        savetool.property_unset("blue_n_suffix")
-        savetool.property_unset("blue_n_node_name")
-        savetool.property_unset("blue_e_suffix")
-        savetool.property_unset("blue_e_node_name")
-        savetool.property_unset("cyan_bc_suffix")
-        savetool.property_unset("cyan_bc_node_name")
-        savetool.property_unset("cyan_orm_suffix")
-        savetool.property_unset("cyan_orm_node_name")
-        savetool.property_unset("cyan_n_suffix")
-        savetool.property_unset("cyan_n_node_name")
-        savetool.property_unset("cyan_e_suffix")
-        savetool.property_unset("cyan_e_node_name")
-        savetool.property_unset("alpha_bc_suffix")
-        savetool.property_unset("alpha_bc_node_name")
-        savetool.property_unset("alpha_orm_suffix")
-        savetool.property_unset("alpha_orm_node_name")
-        savetool.property_unset("alpha_n_suffix")
-        savetool.property_unset("alpha_n_node_name")
-        savetool.property_unset("alpha_e_suffix")
-        savetool.property_unset("alpha_e_node_name")
-        savetool.property_unset("moss_bc_suffix")
-        savetool.property_unset("moss_bc_node_name")
-        savetool.property_unset("moss_orm_suffix")
-        savetool.property_unset("moss_orm_node_name")
-        savetool.property_unset("moss_mask_suffix")
-        savetool.property_unset("moss_mask_node_name")
-        savetool.property_unset("leaves_bc_suffix")
-        savetool.property_unset("leaves_bc_node_name")
-        savetool.property_unset("leaves_orm_suffix")
-        savetool.property_unset("leaves_orm_node_name")
-        savetool.property_unset("leaves_mask_suffix")
-        savetool.property_unset("leaves_mask_node_name")
-        savetool.property_unset("dirt_bc_suffix")
-        savetool.property_unset("dirt_bc_node_name")
-        savetool.property_unset("dirt_orm_suffix")
-        savetool.property_unset("dirt_orm_node_name")
-        savetool.property_unset("dirt_mask_suffix")
-        savetool.property_unset("dirt_mask_node_name")
-
         #tint texture inputs
         savetool.property_unset("is_show_tint_textures")
         savetool.property_unset("tint_base_diffuse_suffix")
@@ -2775,8 +2479,6 @@ class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
         savetool.property_unset("tint_mask_node_name")
         savetool.property_unset("tint_mask_suffix_2")
         savetool.property_unset("tint_mask_node_name_2")
-        savetool.property_unset("hair_tint_id_suffix")
-        savetool.property_unset("hair_tint_id_node_name")
 
         #custom texture inputs
         savetool.property_unset("is_show_custom_textures")
@@ -2800,7 +2502,7 @@ class SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
 
         return {'FINISHED'}
 
-#don't register SAVEUESHADERSCRIPT_shared_main_panel 
+#don't register SAVECODSHADERSCRIPT_shared_main_panel 
 #as it is not a bpy type or panel
 # #trying to register it will cause an error 
 classes = [SaveProperties, PresetCollection, FolderPresetsCollection, SavePreferences, 
@@ -2809,15 +2511,15 @@ classes = [SaveProperties, PresetCollection, FolderPresetsCollection, SavePrefer
     
     SHADER_PRESETS_UL_items, 
      
-    SAVEUESHADERSCRIPT_PT_manage_presets_main_panel_1, SAVEUESHADERSCRIPT_PT_save_custom_preset_main_panel_2,
+    SAVECODSHADERSCRIPT_PT_manage_presets_main_panel_1, SAVECODSHADERSCRIPT_PT_save_custom_preset_main_panel_2,
 
     Shader_ShowFolderActionsOperator, SHADER_MT_FolderActionsMenu, Shader_NewFolderOperator, 
-    Shader_RemoveFolderOperator, Shader_RenameFolderOperator, SAVEUESHADERSCRIPT_OT_remove_preset, ShowMessageOperator,
+    Shader_RemoveFolderOperator, Shader_RenameFolderOperator, SAVECODSHADERSCRIPT_OT_remove_preset, ShowMessageOperator,
     RenamePresetOperator, MovePresetUpOperator, MovePresetDownOperator, MovePresetOperator, 
     
-    SAVEUESHADERSCRIPT_OT_load_default_suffixes, SAVEUESHADERSCRIPT_OT_load_default_regexes, SAVEUESHADERSCRIPT_OT_reset_inputs_main_panel,
+    SAVECODSHADERSCRIPT_OT_load_default_suffixes, SAVECODSHADERSCRIPT_OT_load_default_regexes, SAVECODSHADERSCRIPT_OT_reset_inputs_main_panel,
 
-    SAVEUESHADERSCRIPT_OT_save_shader_map]
+    SAVECODSHADERSCRIPT_OT_save_shader_map]
  
 def register():
     for cls in classes:

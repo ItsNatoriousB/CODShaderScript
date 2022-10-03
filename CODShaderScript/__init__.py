@@ -16,26 +16,26 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# by Anime Nyan
+# by NatoriousB
 
 from . import save_shader_map
 from . import load_shader_map
 
 bl_info = {
-    "name": "UEShaderScript - Load Save UE Shader Map Setups",
-    "author": "Anime Nyan",
-    "version": (1, 2, 8),
-    "blender": (3, 2, 0),
-    "location": "3D View > Properties > Load UE Shaders + Shader Editor > Properties > Save UE Shaders",
+    "name": "CODShaderScript - Load Save COD Shader Map Setups",
+    "author": "NatoriousB",
+    "version": (0, 0, 1),
+    "blender": (3, 3, 0),
+    "location": "3D View > Properties > Load COD Shaders + Shader Editor > Properties > Save COD Shaders",
     "description": "Adds the ability to save and load shader maps and textures for Meshes and adds default preset shader maps",
     "warning": "",
-    "wiki_url": "https://github.com/AnimNyan/UEShaderScript",
+    "wiki_url": "https://github.com/ItsNatoriousB/CODShaderScript",
     "category": "Material",
-    "tracker_url": "https://github.com/AnimNyan/UEShaderScript"
+    "tracker_url": "https://github.com/ItsNatoriousB/CODShaderScript"
 }
 
 """
-Written by Anime Nyan
+Modified by NatoriousB
 
 Adds two panels one in the Shader Editor View to save different preset shader maps and textures and one in the 3D View to load shader maps and textures.
 """
@@ -79,4 +79,4 @@ def unregister():
     save_shader_map.unregister()
     load_shader_map.unregister()
 
-print("(*) UE Shader Script add-on loaded")
+print("(*) COD Shader Script add-on loaded")

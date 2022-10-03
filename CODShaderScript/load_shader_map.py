@@ -16,7 +16,7 @@ from .save_shader_map import SHADER_PRESETS_UL_items, ShowMessageOperator, save_
 #import functions
 from .save_shader_map import get_preferences, get_selected_folder_presets, json_to_nodes_dict, log
 
-#import pathlib for finding current working direction for LOADUESHADERSCRIPT_OT_use_custom_denoising
+#import pathlib for finding current working direction for LOADCODSHADERSCRIPT_OT_use_custom_denoising
 import pathlib
 
 
@@ -77,11 +77,10 @@ class PathProperties(bpy.types.PropertyGroup):
         description = "Dropdown List of all the texture file types",
         items = 
         [
-            (".tga" , ".tga", ""),
-            (".png" , ".png", ""),
-            (".jpg", ".jpg", ""),
-            (".bmp", ".bmp", ""),
-            (".dds", ".dds", "")
+            (".dds", ".DDS", ""),
+            (".png" , ".PNG", ""),
+            (".tga" , ".TGA", ""),
+            (".tiff", ".TIFF", "")
         ]
         
     )
@@ -123,14 +122,12 @@ class PathProperties(bpy.types.PropertyGroup):
         
     )
 
-    is_use_recolor_values: bpy.props.BoolProperty(name="Use Recolor RGB Colour Values", default = True)
-
+    is_use_recolor_values: bpy.props.BoolProperty(name="Use Recolor RGB Color Values", default = True)
     is_add_non_match_textures: bpy.props.BoolProperty(name="Add Non Matching Textures from Props.txt file", default = False)
 
     #---------------color space settings enums
-    #default global variables for the recommended 
-    #colour spaces for image textures
-    #srgb color space isn't used but it is there for reference purposes
+    #default global variables for the recommended image texture color space
+    #SRGB color space isn't used but it's there for reference purposes
     # srgb_color_space_list = ["diffuse", "tint_base_diffuse", "cust1", "cust2", "cust3", "cust4"]
     # non_color_space_list = ["normal", "packed_orm", "emissive", "tint_mask", "specular", "gloss"]
     # linear_color_space_list = ["transparency", "height", "hair_gradient"]
@@ -187,14 +184,6 @@ class PathProperties(bpy.types.PropertyGroup):
         default = 2
     )
 
-    hair_gradient_color_space: bpy.props.EnumProperty(
-        name = "Hair Gradient Color Space",
-        description = "Hair Gradient Image Texture Color Space",
-        items = color_spaces_callback,
-        #2 means Linear
-        default = 2
-    )
-
     specular_color_space: bpy.props.EnumProperty(
         name = "Specular Color Space",
         description = "Specular Image Texture Color Space",
@@ -210,7 +199,6 @@ class PathProperties(bpy.types.PropertyGroup):
         #1 means Non-Color
         default = 1
     )
-
 
     #------extra texture color spaces
     roughness_color_space: bpy.props.EnumProperty(
@@ -260,14 +248,6 @@ class PathProperties(bpy.types.PropertyGroup):
         default = 1
     )
 
-    wpo_color_space: bpy.props.EnumProperty(
-        name = "World Position Offset Color Space",
-        description = "World Position Offset Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
     tint_color_space: bpy.props.EnumProperty(
         name = "Tint Color Space",
         description = "Tint Image Texture Color Space",
@@ -286,22 +266,6 @@ class PathProperties(bpy.types.PropertyGroup):
     roughness_detail_color_space: bpy.props.EnumProperty(
         name = "Roughness Detail Color Space",
         description = "Roughness Detail Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    smoothness_color_space: bpy.props.EnumProperty(
-        name = "Smoothness Color Space",
-        description = "Smoothness Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    edge_mask_color_space: bpy.props.EnumProperty(
-        name = "Edge Mask Color Space",
-        description = "Edge Mask Image Texture Color Space",
         items = color_spaces_callback,
         #1 means Non-Color
         default = 1
@@ -347,140 +311,6 @@ class PathProperties(bpy.types.PropertyGroup):
         default = 1
     )
 
-
-    #------splat + environment textures
-    splat_color_space: bpy.props.EnumProperty(
-        name = "Splat Color Space",
-        description = "Splat Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    red_bc_color_space: bpy.props.EnumProperty(
-        name = "Red Diffuse Color Space",
-        description = "Red Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    red_orm_color_space: bpy.props.EnumProperty(
-        name = "Red Packed RGB Color Space",
-        description = "Red Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    red_n_color_space: bpy.props.EnumProperty(
-        name = "Red Normal Color Space",
-        description = "Red Normal Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    red_e_color_space: bpy.props.EnumProperty(
-        name = "Red Emissions Color Space",
-        description = "Red Emissions Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    green_bc_color_space: bpy.props.EnumProperty(
-        name = "Green Diffuse Color Space",
-        description = "Green Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    green_orm_color_space: bpy.props.EnumProperty(
-        name = "Green Packed RGB Color Space",
-        description = "Green Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    green_n_color_space: bpy.props.EnumProperty(
-        name = "Green Normal Color Space",
-        description = "Green Normal Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    green_e_color_space: bpy.props.EnumProperty(
-        name = "Green Emissions Color Space",
-        description = "Green Emissions Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    blue_bc_color_space: bpy.props.EnumProperty(
-        name = "Blue Diffuse Color Space",
-        description = "Blue Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    blue_orm_color_space: bpy.props.EnumProperty(
-        name = "Blue Packed RGB Color Space",
-        description = "Blue Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    blue_n_color_space: bpy.props.EnumProperty(
-        name = "Blue Normal Color Space",
-        description = "Blue Normal Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    blue_e_color_space: bpy.props.EnumProperty(
-        name = "Blue Emissions Color Space",
-        description = "Blue Emission Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cyan_bc_color_space: bpy.props.EnumProperty(
-        name = "Cyan Diffuse Color Space",
-        description = "Cyan Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    cyan_orm_color_space: bpy.props.EnumProperty(
-        name = "Cyan Packed RGB Color Space",
-        description = "Cyan Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cyan_n_color_space: bpy.props.EnumProperty(
-        name = "Cyan Normal Color Space",
-        description = "Cyan Normal Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cyan_e_color_space: bpy.props.EnumProperty(
-        name = "Cyan Emissions Color Space",
-        description = "Cyan Emissions Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
     alpha_bc_color_space: bpy.props.EnumProperty(
         name = "Alpha Diffuse Color Space",
         description = "Alpha Diffuse Image Texture Color Space",
@@ -512,142 +342,6 @@ class PathProperties(bpy.types.PropertyGroup):
         default = 1
     )
 
-    moss_bc_color_space: bpy.props.EnumProperty(
-        name = "Moss Diffuse Color Space",
-        description = "Moss Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    moss_orm_color_space: bpy.props.EnumProperty(
-        name = "Moss Packed RGB Color Space",
-        description = "Moss Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    moss_mask_color_space: bpy.props.EnumProperty(
-        name = "Moss Mask Color Space",
-        description = "Moss Mask Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    leaves_bc_color_space: bpy.props.EnumProperty(
-        name = "Leaves Diffuse Color Space",
-        description = "Leaves Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    leaves_orm_color_space: bpy.props.EnumProperty(
-        name = "Leaves Packed RGB Color Space",
-        description = "Leaves Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    leaves_mask_color_space: bpy.props.EnumProperty(
-        name = "Leaves Mask Color Space",
-        description = "Leaves Mask Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    dirt_bc_color_space: bpy.props.EnumProperty(
-        name = "Dirt Diffuse Color Space",
-        description = "Dirt Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-        #no default means sRGB
-    )
-
-    dirt_orm_color_space: bpy.props.EnumProperty(
-        name = "Dirt Packed RGB Color Space",
-        description = "Dirt Packed RGB Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    dirt_mask_color_space: bpy.props.EnumProperty(
-        name = "Dirt Mask Color Space",
-        description = "Dirt Mask Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-
-    #------tint color spaces
-    tint_base_diffuse_color_space: bpy.props.EnumProperty(
-        name = "Tint Base Diffuse Color Space",
-        description = "Tint Base Diffuse Image Texture Color Space",
-        items = color_spaces_callback
-    )
-
-    tint_mask_color_space: bpy.props.EnumProperty(
-        name = "Tint Mask Color Space",
-        description = "Tint Mask Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    tint_mask_2_color_space: bpy.props.EnumProperty(
-        name = "Tint Mask 2 Color Space",
-        description = "Tint Mask 2 Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    hair_tint_id_color_space: bpy.props.EnumProperty(
-        name = "Hair Tint ID Color Space",
-        description = "Hair Tint ID Image Texture Color Space",
-        items = color_spaces_callback,
-        #2 means Linear
-        default = 2
-    )
-
-
-    #------custom color spaces
-    # all custom textures are by default Non-Color color space
-    cust1_color_space: bpy.props.EnumProperty(
-        name = "Custom1 Color Space",
-        description = "Custom1 Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cust2_color_space: bpy.props.EnumProperty(
-        name = "Custom2 Color Space",
-        description = "Custom2 Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cust3_color_space: bpy.props.EnumProperty(
-        name = "Custom3 Color Space",
-        description = "Custom3 Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
-    cust4_color_space: bpy.props.EnumProperty(
-        name = "Custom4 Color Space",
-        description = "Custom4 Image Texture Color Space",
-        items = color_spaces_callback,
-        #1 means Non-Color
-        default = 1
-    )
-
     non_match_color_space: bpy.props.EnumProperty(
         name = "Non Match Textures Color Space",
         description = "Non Match Image Textures Color Space",
@@ -668,8 +362,6 @@ class PathProperties(bpy.types.PropertyGroup):
     #show the abs_props_txt path in the debug console
     is_show_abs_props_debug: bpy.props.BoolProperty(name="Show props.txt File Path in Console (Debug)", default = False)
     
-
-
     #This is NOT a property that will show on any panel and the user
     #cannot interact with this variable
     #it is used to trigger a flag when accessing bpy.ops to save
@@ -687,9 +379,9 @@ class PathProperties(bpy.types.PropertyGroup):
 #------------code for drawing main panel in the 3D View
 #don't register this class it is not a bpy panel or type so
 #it does not need to be registered
-class LOADUESHADERSCRIPT_shared_main_panel:
+class LOADCODSHADERSCRIPT_shared_main_panel:
     # bl_label = "Load UE Shaders"
-    # bl_idname = "LOADUESHADERSCRIPT_PT_main_panel"
+    # bl_idname = "LOADCODSHADERSCRIPT_PT_main_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "UE"
@@ -697,9 +389,9 @@ class LOADUESHADERSCRIPT_shared_main_panel:
 
 #main panel part 1
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_select_preset_main_panel_1(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_select_preset_main_panel_1(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Select Preset in Folder"
-    bl_idname = "LOADUESHADERSCRIPT_PT_select_preset_main_panel_1"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_select_preset_main_panel_1"
 
     def draw(self, context):
         layout = self.layout
@@ -728,9 +420,9 @@ class LOADUESHADERSCRIPT_PT_select_preset_main_panel_1(LOADUESHADERSCRIPT_shared
 
 #main panel part 2
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_load_settings_main_panel_2(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_load_settings_main_panel_2(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Load Shader Map Settings"
-    bl_idname = "LOADUESHADERSCRIPT_PT_load_settings_main_panel_2"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_load_settings_main_panel_2"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
@@ -770,9 +462,9 @@ class LOADUESHADERSCRIPT_PT_load_settings_main_panel_2(LOADUESHADERSCRIPT_shared
 
 #main panel part 3
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_alpha_emissive_main_panel_3(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_alpha_emissive_main_panel_3(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Alpha and Emissive Settings"
-    bl_idname = "LOADUESHADERSCRIPT_PT_alpha_emissive_main_panel_3"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_alpha_emissive_main_panel_3"
     #put parent id so it knows this is a subpanel of the parent panel
     bl_options = {"DEFAULT_CLOSED"}
     
@@ -812,9 +504,9 @@ class LOADUESHADERSCRIPT_PT_alpha_emissive_main_panel_3(LOADUESHADERSCRIPT_share
 
 #main panel part 4
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_color_space_main_panel_4(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_color_space_main_panel_4(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Color Space Settings"
-    bl_idname = "LOADUESHADERSCRIPT_PT_color_space_main_panel_4"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_color_space_main_panel_4"
     bl_options = {"DEFAULT_CLOSED"}
     
     #poll function only allows 
@@ -859,7 +551,6 @@ class LOADUESHADERSCRIPT_PT_color_space_main_panel_4(LOADUESHADERSCRIPT_shared_m
         layout.prop(pathtool, "alpha_color_space")
         layout.prop(pathtool, "emissions_color_space")
         layout.prop(pathtool, "height_color_space")
-        layout.prop(pathtool, "hair_gradient_color_space")
         layout.prop(pathtool, "specular_color_space")
         layout.prop(pathtool, "gloss_color_space")
 
@@ -869,7 +560,6 @@ class LOADUESHADERSCRIPT_PT_color_space_main_panel_4(LOADUESHADERSCRIPT_shared_m
         layout.prop(pathtool, "subsurface_color_space")
         layout.prop(pathtool, "ambient_occlusion_color_space")
         layout.prop(pathtool, "detail_n_color_space")
-        layout.prop(pathtool, "wpo_color_space")
         layout.prop(pathtool, "tint_color_space")
         layout.prop(pathtool, "normal_detail_color_space")
         layout.prop(pathtool, "roughness_detail_color_space")
@@ -881,46 +571,6 @@ class LOADUESHADERSCRIPT_PT_color_space_main_panel_4(LOADUESHADERSCRIPT_shared_m
         layout.prop(pathtool, "sheen_color_space")
         layout.prop(pathtool, "glass_mask_color_space")
 
-        layout.prop(pathtool, "splat_color_space")
-        layout.prop(pathtool, "red_bc_color_space")
-        layout.prop(pathtool, "red_orm_color_space")
-        layout.prop(pathtool, "red_n_color_space")
-        layout.prop(pathtool, "red_e_color_space")
-        layout.prop(pathtool, "green_bc_color_space")
-        layout.prop(pathtool, "green_orm_color_space")
-        layout.prop(pathtool, "green_n_color_space")
-        layout.prop(pathtool, "green_e_color_space")
-        layout.prop(pathtool, "blue_bc_color_space")
-        layout.prop(pathtool, "blue_orm_color_space")
-        layout.prop(pathtool, "blue_e_color_space")
-        layout.prop(pathtool, "cyan_bc_color_space")
-        layout.prop(pathtool, "cyan_orm_color_space")
-        layout.prop(pathtool, "cyan_n_color_space")
-        layout.prop(pathtool, "cyan_e_color_space")
-        layout.prop(pathtool, "alpha_bc_color_space")
-        layout.prop(pathtool, "alpha_orm_color_space")
-        layout.prop(pathtool, "alpha_n_color_space")
-        layout.prop(pathtool, "alpha_e_color_space")
-        layout.prop(pathtool, "moss_bc_color_space")
-        layout.prop(pathtool, "moss_orm_color_space")
-        layout.prop(pathtool, "moss_mask_color_space")
-        layout.prop(pathtool, "leaves_bc_color_space")
-        layout.prop(pathtool, "leaves_orm_color_space")
-        layout.prop(pathtool, "leaves_mask_color_space")
-        layout.prop(pathtool, "dirt_bc_color_space")
-        layout.prop(pathtool, "dirt_orm_color_space")
-        layout.prop(pathtool, "dirt_mask_color_space")
-
-        layout.prop(pathtool, "tint_base_diffuse_color_space")
-        layout.prop(pathtool, "tint_mask_color_space")
-        layout.prop(pathtool, "tint_mask_2_color_space")
-        layout.prop(pathtool, "hair_tint_id_color_space")
-
-        layout.prop(pathtool, "cust1_color_space")
-        layout.prop(pathtool, "cust2_color_space")
-        layout.prop(pathtool, "cust3_color_space")
-        layout.prop(pathtool, "cust4_color_space")
-
         layout.separator()
         layout.label(text = "(Need Load Shader Map Settings > Add Non Match enabled to do anything)")
         layout.prop(pathtool, "non_match_color_space")
@@ -929,9 +579,9 @@ class LOADUESHADERSCRIPT_PT_color_space_main_panel_4(LOADUESHADERSCRIPT_shared_m
 
 #main panel part 5
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_advanced_settings_main_panel_5(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_advanced_settings_main_panel_5(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Advanced Settings"
-    bl_idname = "LOADUESHADERSCRIPT_PT_advanced_settings_main_panel_5"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_advanced_settings_main_panel_5"
     bl_options = {"DEFAULT_CLOSED"}
     
     #poll function only allows 
@@ -981,23 +631,23 @@ class LOADUESHADERSCRIPT_PT_advanced_settings_main_panel_5(LOADUESHADERSCRIPT_sh
 
 #main panel part 6
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_reset_settings_main_panel_6(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_reset_settings_main_panel_6(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Reset Load Shader Map Settings"
-    bl_idname = "LOADUESHADERSCRIPT_PT_reset_settings_main_panel_6"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_reset_settings_main_panel_6"
     #hide header means to hide the title because we 
     #just want to see the button here
     #not the bl_label
     #bl_options = {"HIDE_HEADER"}
     def draw(self, context):
         layout = self.layout
-        layout.operator("loadueshaderscript.reset_settings_main_panel_operator")
+        layout.operator("loadcodshaderscript.reset_settings_main_panel_operator")
 
 
 #main panel part 7
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_load_methods_main_panel_7(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_load_methods_main_panel_7(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Load Shader Map Methods"
-    bl_idname = "LOADUESHADERSCRIPT_PT_load_methods_main_panel_7"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_load_methods_main_panel_7"
 
     def draw(self, context):
         layout = self.layout
@@ -1025,7 +675,7 @@ class LOADUESHADERSCRIPT_PT_load_methods_main_panel_7(LOADUESHADERSCRIPT_shared_
             box.prop(pathtool, "export_folder_path")
         else:
             box.prop(pathtool, "material_indices_list_string")
-        box.operator("loadueshaderscript.add_to_multiple_materials_operator")
+        box.operator("loadcodshaderscript.add_to_multiple_materials_operator")
                 
         #Create a box for adding shader maps to all materials
         #to the selected mesh with all
@@ -1036,7 +686,7 @@ class LOADUESHADERSCRIPT_PT_load_methods_main_panel_7(LOADUESHADERSCRIPT_shared_
         if(pathtool.is_load_img_textures):
             box.prop(pathtool, "export_folder_path")
         
-        box.operator("loadueshaderscript.add_to_selected_meshes_operator" )
+        box.operator("loadcodshaderscript.add_to_selected_meshes_operator" )
 
         layout.use_property_split = False
 
@@ -1059,33 +709,33 @@ class LOADUESHADERSCRIPT_PT_load_methods_main_panel_7(LOADUESHADERSCRIPT_shared_
                 box.prop(pathtool, "props_txt_path")
                 box.prop(pathtool, "export_folder_path")
             
-            box.operator("loadueshaderscript.add_to_one_material_operator")
+            box.operator("loadcodshaderscript.add_to_one_material_operator")
 
 
 #main panel part 8
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_solo_material_main_panel_8(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_solo_material_main_panel_8(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Solo Material"
-    bl_idname = "LOADUESHADERSCRIPT_PT_solo_material_main_panel_8"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_solo_material_main_panel_8"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         layout = self.layout
         layout.label(text = "Toggle Solo Use Nodes on the active material so it easier to adjust")
         layout.label(text = "Solo Active Material for ALL Meshes")
-        layout.operator("loadueshaderscript.solo_material_all_operator")
-        layout.operator("loadueshaderscript.use_nodes_mesh_all_operator")
+        layout.operator("loadcodshaderscript.solo_material_all_operator")
+        layout.operator("loadcodshaderscript.use_nodes_mesh_all_operator")
         layout.separator()
 
         layout.label(text = "Solo Active Material for the Active Mesh")
-        layout.operator("loadueshaderscript.solo_material_operator")
-        layout.operator("loadueshaderscript.use_nodes_mesh_operator")
+        layout.operator("loadcodshaderscript.solo_material_operator")
+        layout.operator("loadcodshaderscript.use_nodes_mesh_operator")
 
 #main panel part 9
 #inheriting the shared panel's bl_space_type, bl_region_type and bl_category
-class LOADUESHADERSCRIPT_PT_custom_denoise_main_panel_9(LOADUESHADERSCRIPT_shared_main_panel, bpy.types.Panel):
+class LOADCODSHADERSCRIPT_PT_custom_denoise_main_panel_9(LOADCODSHADERSCRIPT_shared_main_panel, bpy.types.Panel):
     bl_label = "Pit Princess Custom Denoising Setup"
-    bl_idname = "LOADUESHADERSCRIPT_PT_custom_denoise_main_panel_9"
+    bl_idname = "LOADCODSHADERSCRIPT_PT_custom_denoise_main_panel_9"
     bl_options = {"DEFAULT_CLOSED"}
     
     def draw(self, context):
@@ -1093,17 +743,17 @@ class LOADUESHADERSCRIPT_PT_custom_denoise_main_panel_9(LOADUESHADERSCRIPT_share
         layout.label(text = "Press press Use Pit Princess Custom Denoising Setup")
         layout.label(text = "to load a custom compositing tab denoising node setup")
         #this is for Blender 3.0+
-        layout.operator("loadueshaderscript.cust_denoise_blender_3_0_plus_operator")
+        layout.operator("loadcodshaderscript.cust_denoise_blender_3_0_plus_operator")
 
         #this is for Blender 2.93 and below
-        layout.operator("loadueshaderscript.cust_denoise_blender_2_93_below_operator")
+        layout.operator("loadcodshaderscript.cust_denoise_blender_2_93_below_operator")
 
 #---------------------------code for Operators in Main Panel
 
-class LOADUESHADERSCRIPT_OT_add_to_one_material(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_add_to_one_material(bpy.types.Operator):
     bl_label = "Add ONE Shader Map to Active Material"
     bl_description = "Add ONE Shader Map to Active Material on Active Mesh"
-    bl_idname = "loadueshaderscript.add_to_one_material_operator"
+    bl_idname = "loadcodshaderscript.add_to_one_material_operator"
     def execute(self, context):
         #time how long it takes to create all shader maps for all materials
         #set start time
@@ -1127,7 +777,7 @@ class LOADUESHADERSCRIPT_OT_add_to_one_material(bpy.types.Operator):
         #else if required fields are missing
         else:
             error_message = "Error: One or more Required Fields, marked with (!) have not been filled in."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
         
         return {"FINISHED"}
@@ -1160,22 +810,22 @@ def create_one_material_shader_map(active_object, pathtool, time_start):
         #if the active_object is not a mesh
         else:
             error_message = "Error: Active Object is not a mesh, please select a mesh before pressing Add ONE Shader Map to Active Material"
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
 
 
     #if active_object is None and does not exist
     else:
         error_message = "Error: No Active Object, please select a mesh before pressing Add ONE Shader Map to Active Material"
-        bpy.ops.ueshaderscript.show_message(message = error_message)
+        bpy.ops.codshaderscript.show_message(message = error_message)
         log(error_message)
 
 
 
-class LOADUESHADERSCRIPT_OT_add_to_multiple_materials(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_add_to_multiple_materials(bpy.types.Operator):
     bl_label = "Add Shader Maps to Multiple Materials"
     bl_description = "Add Shader Maps to Multiple Materials by Index"
-    bl_idname = "loadueshaderscript.add_to_multiple_materials_operator"
+    bl_idname = "loadcodshaderscript.add_to_multiple_materials_operator"
     def execute(self, context):
         #time how long it takes to create all shader maps for all materials
         #set start time
@@ -1197,7 +847,7 @@ class LOADUESHADERSCRIPT_OT_add_to_multiple_materials(bpy.types.Operator):
         #else if required fields are missing
         else:
             error_message = "Error: One or more Required Fields, marked with (!) have not been filled in."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
         
         return {"FINISHED"}
@@ -1287,7 +937,7 @@ def create_multiple_materials_shader_maps(context, pathtool, time_start):
                 #show warning message for material indexes not found
                 for not_found_material_index in materials_indices_to_add_list:
                     warning_message = " ".join(("Warning: The", not_found_material_index, "material slot was not found, please note that indexes start from 0."))
-                    bpy.ops.ueshaderscript.show_message(message = warning_message)
+                    bpy.ops.codshaderscript.show_message(message = warning_message)
                     log(warning_message)
 
                 #print the time taken to finish creating shader maps
@@ -1299,28 +949,28 @@ def create_multiple_materials_shader_maps(context, pathtool, time_start):
             #if the active object type is not a mesh
             else:
                 error_message = "Error: Active Object is not a mesh, please select a mesh before pressing Add Shader Maps to Multiple Materials"
-                bpy.ops.ueshaderscript.show_message(message = error_message)
+                bpy.ops.codshaderscript.show_message(message = error_message)
                 log(error_message)
         
         #if the material_indices_list_string is empty
         else:
             error_message = "Error: Material Indices List is empty, please enter integers separated by one space before pressing Add Shader Maps to Multiple Materials"
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
             
     
     #if the active object does not exist
     else:
         error_message = "Error: No Active Object, please select a mesh before pressing Add Shader Maps to Multiple Materials"
-        bpy.ops.ueshaderscript.show_message(message = error_message)
+        bpy.ops.codshaderscript.show_message(message = error_message)
         log(error_message)
 
 
 
-class LOADUESHADERSCRIPT_OT_add_to_selected_meshes(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_add_to_selected_meshes(bpy.types.Operator):
     bl_label = "Add Shader Maps to ALL Selected Meshes"
     bl_description = "Add Shader Maps to all Materials on all Selected Meshes"
-    bl_idname = "loadueshaderscript.add_to_selected_meshes_operator"
+    bl_idname = "loadcodshaderscript.add_to_selected_meshes_operator"
     def execute(self, context):
         #time how long it takes to create all shader maps for all materials
         #set start time
@@ -1340,7 +990,7 @@ class LOADUESHADERSCRIPT_OT_add_to_selected_meshes(bpy.types.Operator):
         #else if required fields are missing
         else:
             error_message = "Error: The Required Exported Game Folder Field, marked with (!) has not been filled in."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
     
         return {"FINISHED"}
@@ -1417,7 +1067,7 @@ def create_selected_meshes_shader_maps(context, pathtool, time_start):
     else:
         #error message if user has selected no meshes or objects
         error_message = "Error: No meshes selected, please select one or more meshes before pressing Add Shader Maps to ALL Selected Meshes"
-        bpy.ops.ueshaderscript.show_message(message = error_message)
+        bpy.ops.codshaderscript.show_message(message = error_message)
         log(error_message)
 
     
@@ -1469,7 +1119,7 @@ def find_props_txt_and_create_shader_map(material, pathtool, selected_obj, previ
         if props_txt_path == "":
             warning_message = "".join(("Warning: props.txt for \"", selected_obj.name, "\" \"", material.name, 
                         "\" was not found in Game Folder so it was ignored!"))
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
             log(warning_message)
             is_props_txt_exist_for_material = False
 
@@ -1546,7 +1196,7 @@ def get_value_in_gen_obj(gen_obj_match):
     #so if more matches then one print an error
     if match > 1:
         error_message = "Error: More than one match for the props_txt_path for rglob"
-        bpy.ops.ueshaderscript.show_message(message = error_message)
+        bpy.ops.codshaderscript.show_message(message = error_message)
         log(error_message)
     
     return props_txt_path
@@ -1615,7 +1265,7 @@ def load_preset(material, abs_props_txt_path, pathtool):
     #to see it clearly
     #print("nodes_dict:",nodes_dict)
     # if nodes_dict["editor_type"] != editor_type:
-    #     bpy.ops.ueshaderscript.show_message(
+    #     bpy.ops.codshaderscript.show_message(
     #         message="Selected preset can not be restored to this node editor.")
     #     return {'FINISHED'}
     if nodes_dict["editor_type"] == SHADER_EDITOR:
@@ -1625,7 +1275,7 @@ def load_preset(material, abs_props_txt_path, pathtool):
             #checks have already happened before it reaches this point
             #in the operators themselves
             # if bpy.context.object is None:
-            #     bpy.ops.ueshaderscript.show_message(
+            #     bpy.ops.codshaderscript.show_message(
             #         message = "Please choose a mesh in the 3D view to restore.")
             #     return {'FINISHED'}
             
@@ -1644,7 +1294,7 @@ def load_preset(material, abs_props_txt_path, pathtool):
         if pathtool.is_load_img_textures:
             dict_to_textures(nodes_dict["img_textures_list"], nodes_dict["regex_props_txt"], nodes_dict["total_capture_groups"], nodes_dict["texture_type_capture_group_index"], material, node_tree, abs_props_txt_path, pathtool)
     else:
-         bpy.ops.ueshaderscript.show_message(
+         bpy.ops.codshaderscript.show_message(
                     message = "Only Shader Editor Restores are supported currently not Compositor editor restores.")
 
 
@@ -1684,10 +1334,10 @@ def load_preset(material, abs_props_txt_path, pathtool):
     #     update_selected_preset_used_count()
     #     update_10_most_used_presets()
 
-class LOADUESHADERSCRIPT_OT_solo_material(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_solo_material(bpy.types.Operator):
     bl_label = "Solo Active Material for Active Mesh (Solo Use Nodes)"
     bl_description = "Use Nodes True for Active Material and False for Other Materials on Active Mesh"
-    bl_idname = "loadueshaderscript.solo_material_operator"
+    bl_idname = "loadcodshaderscript.solo_material_operator"
     def execute(self, context):
         active_object = bpy.context.active_object
 
@@ -1709,27 +1359,27 @@ class LOADUESHADERSCRIPT_OT_solo_material(bpy.types.Operator):
                 #if the active material does not exist
                 else:
                     error_message = "Error: There is no active material, please select a mesh and material before pressing Solo Material."
-                    bpy.ops.ueshaderscript.show_message(message = error_message)
+                    bpy.ops.codshaderscript.show_message(message = error_message)
                     log(error_message)
             #if the active object is not a mesh
             else:
                 error_message = "Error: The Active Object was not a Mesh, please select a mesh before pressing Solo Material."
-                bpy.ops.ueshaderscript.show_message(message = error_message)
+                bpy.ops.codshaderscript.show_message(message = error_message)
                 log(error_message)
         
         #if the active object does not exist
         else:
             error_message = "Error: No Active Mesh was found, please select a mesh before pressing Solo Material."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
         
         return {"FINISHED"}
 
 
-class LOADUESHADERSCRIPT_OT_solo_material_all(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_solo_material_all(bpy.types.Operator):
     bl_label = "Solo Active Material for ALL Meshes (Solo Use Nodes)"
     bl_description = "Use Nodes True for Active Material and False for Other Materials on ALL Meshes"
-    bl_idname = "loadueshaderscript.solo_material_all_operator"
+    bl_idname = "loadcodshaderscript.solo_material_all_operator"
     def execute(self, context):
         active_object = bpy.context.active_object
 
@@ -1754,27 +1404,27 @@ class LOADUESHADERSCRIPT_OT_solo_material_all(bpy.types.Operator):
                 #if the active material does not exist
                 else:
                     error_message = "Error: There is no active material, please select a mesh and material before pressing Solo Material."
-                    bpy.ops.ueshaderscript.show_message(message = error_message)
+                    bpy.ops.codshaderscript.show_message(message = error_message)
                     log(error_message)
             #if the active object is not a mesh
             else:
                 error_message = "Error: The Active Object was not a Mesh, please select a mesh before pressing Solo Material."
-                bpy.ops.ueshaderscript.show_message(message = error_message)
+                bpy.ops.codshaderscript.show_message(message = error_message)
                 log(error_message)
         
         #if the active object does not exist
         else:
             error_message = "Error: No Active Mesh was found, please select a mesh before pressing Solo Material."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
         
         return {"FINISHED"}
 
 
-class LOADUESHADERSCRIPT_OT_use_nodes_mesh(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_use_nodes_mesh(bpy.types.Operator):
     bl_label = "Use Nodes True for ALL Materials on Active Mesh"
     bl_description = "Make Use Nodes True for ALL Materials on Active Mesh"
-    bl_idname = "loadueshaderscript.use_nodes_mesh_operator"
+    bl_idname = "loadcodshaderscript.use_nodes_mesh_operator"
     def execute(self, context):
         active_object = bpy.context.active_object
 
@@ -1794,27 +1444,27 @@ class LOADUESHADERSCRIPT_OT_use_nodes_mesh(bpy.types.Operator):
                 #if there are no material slots on the active mesh
                 else:
                     error_message = "Error: There are no materials on the active mesh, please select a mesh with materials before pressing Use Nodes."
-                    bpy.ops.ueshaderscript.show_message(message = error_message)
+                    bpy.ops.codshaderscript.show_message(message = error_message)
                     log(error_message)
             #if the active object is not a mesh
             else:
                 error_message = "Error: The Active Object was not a Mesh, please select a mesh before pressing Use Nodes."
-                bpy.ops.ueshaderscript.show_message(message = error_message)
+                bpy.ops.codshaderscript.show_message(message = error_message)
                 log(error_message)
         
         #if the active object does not exist
         else:
             error_message = "Error: No Active Mesh was found, please select a mesh before pressing Use Nodes."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
         
         return {"FINISHED"}
 
 
-class LOADUESHADERSCRIPT_OT_use_nodes_mesh_all(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_use_nodes_mesh_all(bpy.types.Operator):
     bl_label = "Use Nodes True for ALL Materials on ALL Meshes"
     bl_description = "Make Use Nodes True for ALL Materials on ALL Meshes"
-    bl_idname = "loadueshaderscript.use_nodes_mesh_all_operator"
+    bl_idname = "loadcodshaderscript.use_nodes_mesh_all_operator"
     def execute(self, context):
         scene_objects_list = bpy.context.scene.objects
         #if there are objects in the scene
@@ -1832,17 +1482,17 @@ class LOADUESHADERSCRIPT_OT_use_nodes_mesh_all(bpy.types.Operator):
             #which means there are no scene objects send a warning
             #since nothing will happen
             error_message = "Error: There are no Meshes in the scene, make sure there are before pressing Use Nodes."
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
 
         return {"FINISHED"}
 
 #-----------------------------------Load Compositing Node Setup
 #works for blender 3.0+
-class LOADUESHADERSCRIPT_OT_cust_denoise_blender_3_0_plus(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_cust_denoise_blender_3_0_plus(bpy.types.Operator):
     bl_label = "(Blender 3.0+) Use Pit Princess Custom Denoising Setup"
     bl_description = "(Blender 3.0+) Use Pit Princess Compositor Denoising Setup"
-    bl_idname = "loadueshaderscript.cust_denoise_blender_3_0_plus_operator"
+    bl_idname = "loadcodshaderscript.cust_denoise_blender_3_0_plus_operator"
     def execute(self, context):
         #change render engine to Cycles and GPU Compute
         bpy.context.scene.render.engine = 'CYCLES'
@@ -1873,7 +1523,7 @@ class LOADUESHADERSCRIPT_OT_cust_denoise_blender_3_0_plus(bpy.types.Operator):
         #so it gets C:\Users\seabr\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\UEShaderScript\
         path_lib = pathlib.Path(__file__).parent.absolute()
 
-        compositing_file_path= os.path.join(path_lib, "ue_shader_script_compositing_json.json")
+        compositing_file_path= os.path.join(path_lib, "cod_shader_script_compositing.json")
         
         #------------load the compositing node setup to the compositor window
         #reading string from file because it would take up too much space in the code
@@ -1893,7 +1543,7 @@ class LOADUESHADERSCRIPT_OT_cust_denoise_blender_3_0_plus(bpy.types.Operator):
 
         #show feedback to user
         success_message = "Custom Denoising Setup was added succesfully!"
-        bpy.ops.ueshaderscript.show_message(
+        bpy.ops.codshaderscript.show_message(
             message = success_message)
         #show success message in blender console
         log(success_message)
@@ -1936,10 +1586,10 @@ def enable_render_layers_blender_3_0_plus(view_layer_string):
 
 
 #works for blender 2.93 and below
-class LOADUESHADERSCRIPT_OT_cust_denoise_blender_2_93_below(bpy.types.Operator):
+class LOADCODSHADERSCRIPT_OT_cust_denoise_blender_2_93_below(bpy.types.Operator):
     bl_label = "(Blender 2.93-) Use Pit Princess Custom Denoising Setup"
     bl_description = "(Blender 2.93 and Below) Use Pit Princess Compositor Denoising Setup"
-    bl_idname = "loadueshaderscript.cust_denoise_blender_2_93_below_operator"
+    bl_idname = "loadcodshaderscript.cust_denoise_blender_2_93_below_operator"
     def execute(self, context):
         #change render engine to Cycles and GPU Compute
         bpy.context.scene.render.engine = 'CYCLES'
@@ -2003,7 +1653,7 @@ class LOADUESHADERSCRIPT_OT_cust_denoise_blender_2_93_below(bpy.types.Operator):
         #and then converts the relative path into an absolute path
         path_lib = pathlib.Path(__file__).parent.absolute()
 
-        compositing_file_path= os.path.join(path_lib, "ue_shader_script_compositing_json.json")
+        compositing_file_path= os.path.join(path_lib, "cod_shader_script_compositing.json")
         
         #------------load the compositing node setup to the compositor window
         #reading string from file because it would take up too much space in the code
@@ -2023,7 +1673,7 @@ class LOADUESHADERSCRIPT_OT_cust_denoise_blender_2_93_below(bpy.types.Operator):
 
         #show feedback to user
         success_message = "Custom Denoising Setup was added succesfully!"
-        bpy.ops.ueshaderscript.show_message(
+        bpy.ops.codshaderscript.show_message(
             message = success_message)
         #show success message in blender console
         log(success_message)
@@ -2059,7 +1709,7 @@ def get_json_from_selected_preset():
     selected_folder_presets = get_selected_folder_presets(isOverridePackage)
     index = selected_folder_presets.preset_index
     if index < 0:
-        bpy.ops.ueshaderscript.show_message(
+        bpy.ops.codshaderscript.show_message(
             message = "Please choose a nodes preset to restore.")
         return {'FINISHED'}
     JSON = selected_folder_presets.presets[index].content
@@ -2258,7 +1908,7 @@ def dict_to_textures(img_textures_list, regex_pattern_in_props_txt_file, total_c
 
             if suffix == "":
                 warning_message = " ".join(("Warning:", node_name, "has an empty space suffix that was ignored, please remake this shader map!"))
-                bpy.ops.ueshaderscript.show_message(message = warning_message)
+                bpy.ops.codshaderscript.show_message(message = warning_message)
             return is_img_loaded
 
 
@@ -2700,12 +2350,11 @@ def clean_texture_path(texture_path, texture_file_type):
             
         else:
             error_message = "".join(("Error: tex_location in props.txt does not exist!"))
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
         
     
     
     return whole_path, tex_path_no_file_type
-
 
 
 #default global variables for the recommended 
@@ -2729,8 +2378,6 @@ def change_colour_space(texture, node_to_load, pathtool):
         node_to_load.image.colorspace_settings.name = pathtool.emissions_color_space
     elif texture == "height":
         node_to_load.image.colorspace_settings.name = pathtool.height_color_space
-    elif texture == "hair_gradient":
-        node_to_load.image.colorspace_settings.name = pathtool.hair_gradient_color_space
     elif texture == "specular":
         node_to_load.image.colorspace_settings.name = pathtool.specular_color_space
     elif texture == "gloss":
@@ -2767,40 +2414,6 @@ def change_colour_space(texture, node_to_load, pathtool):
         node_to_load.image.colorspace_settings.name = pathtool.anisotropic_color_space
     elif texture == "sheen":
         node_to_load.image.colorspace_settings.name = pathtool.sheen_color_space
-    elif texture == "splat":
-        node_to_load.image.colorspace_settings.name = pathtool.splat_color_space
-    elif texture == "red_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.red_bc_color_space
-    elif texture == "red_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.red_orm_color_space
-    elif texture == "red_n":
-        node_to_load.image.colorspace_settings.name = pathtool.red_n_color_space
-    elif texture == "red_e":
-        node_to_load.image.colorspace_settings.name = pathtool.red_e_color_space
-    elif texture == "green_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.green_bc_color_space
-    elif texture == "green_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.green_orm_color_space
-    elif texture == "green_n":
-        node_to_load.image.colorspace_settings.name = pathtool.green_n_color_space
-    elif texture == "green_e":
-        node_to_load.image.colorspace_settings.name = pathtool.green_e_color_space
-    elif texture == "blue_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.blue_bc_color_space
-    elif texture == "blue_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.blue_orm_color_space
-    elif texture == "blue_n":
-        node_to_load.image.colorspace_settings.name = pathtool.blue_n_color_space
-    elif texture == "blue_e":
-        node_to_load.image.colorspace_settings.name = pathtool.blue_e_color_space
-    elif texture == "cyan_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.cyan_bc_color_space
-    elif texture == "cyan_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.cyan_orm_color_space
-    elif texture == "cyan_n":
-        node_to_load.image.colorspace_settings.name = pathtool.cyan_n_color_space
-    elif texture == "cyan_e":
-        node_to_load.image.colorspace_settings.name = pathtool.cyan_e_color_space
     elif texture == "alpha_bc":
         node_to_load.image.colorspace_settings.name = pathtool.alpha_bc_color_space
     elif texture == "alpha_orm":
@@ -2809,43 +2422,9 @@ def change_colour_space(texture, node_to_load, pathtool):
         node_to_load.image.colorspace_settings.name = pathtool.alpha_n_color_space
     elif texture == "alpha_e":
         node_to_load.image.colorspace_settings.name = pathtool.alpha_e_color_space
-    elif texture == "moss_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.moss_bc_color_space
-    elif texture == "moss_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.moss_orm_color_space
-    elif texture == "moss_mask":
-        node_to_load.image.colorspace_settings.name = pathtool.moss_mask_color_space
-    elif texture == "leaves_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.leaves_bc_color_space
-    elif texture == "leaves_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.leaves_orm_color_space
-    elif texture == "leaves_mask":
-        node_to_load.image.colorspace_settings.name = pathtool.leaves_mask_color_space
-    elif texture == "dirt_bc":
-        node_to_load.image.colorspace_settings.name = pathtool.dirt_bc_color_space
-    elif texture == "dirt_orm":
-        node_to_load.image.colorspace_settings.name = pathtool.dirt_orm_color_space
-    elif texture == "dirt_mask":
-        node_to_load.image.colorspace_settings.name = pathtool.dirt_mask_color_space
-    elif texture == "tint_base_diffuse":
-        node_to_load.image.colorspace_settings.name = pathtool.tint_base_diffuse_color_space
-    elif texture == "tint_mask":
-        node_to_load.image.colorspace_settings.name = pathtool.tint_mask_color_space
-    elif texture == "tint_mask_2":
-        node_to_load.image.colorspace_settings.name = pathtool.tint_mask_2_color_space
-    elif texture == "hair_tint_id":
-        node_to_load.image.colorspace_settings.name = pathtool.hair_tint_id_color_space
-    elif texture == "cust1":
-        node_to_load.image.colorspace_settings.name = pathtool.cust1_color_space
-    elif texture == "cust2":
-        node_to_load.image.colorspace_settings.name = pathtool.cust2_color_space
-    elif texture == "cust3":
-        node_to_load.image.colorspace_settings.name = pathtool.cust3_color_space
-    elif texture == "cust4":
-        node_to_load.image.colorspace_settings.name = pathtool.cust4_color_space
     else:
         error_message = " ".join(("Error: No texture called:", texture, "was found to change the color space!"))
-        bpy.ops.ueshaderscript.show_message(message = error_message)
+        bpy.ops.codshaderscript.show_message(message = error_message)
         log(error_message)
 
 
@@ -2870,7 +2449,7 @@ def img_textures_special_handler(textures, pathtool, material, node_to_load, nod
         
         else:
             error_message = "Error: could not find clipping method"
-            bpy.ops.ueshaderscript.show_message(message = error_message)
+            bpy.ops.codshaderscript.show_message(message = error_message)
             log(error_message)
 
     #special case if the node loaded was an emissive BDE
@@ -3216,13 +2795,13 @@ def create_a_new_img_texture(node_to_load, complete_path_to_image, texture_file_
         #if nothing was found by the glob and it the match list is an empty list
         else:
             warning_message = " ".join(("Error: No matching textures with file path", file_no_ext, "was found to load!"))
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
             log(warning_message)
         
         if len(complete_path_match_list) > 1:
             #-1 is the last item in the list in python syntax
             warning_message = " ".join(("Warning: >1 matching texture, texture:", complete_path_match_list[-1], "was loaded."))
-            bpy.ops.ueshaderscript.show_message(message = warning_message)
+            bpy.ops.codshaderscript.show_message(message = warning_message)
             log(warning_message)
                 
 
@@ -3255,7 +2834,7 @@ def change_emission_strength_principled_bsdf(node_tree, node_type, emission_stre
     
     if count > 1:
         warning_message = " ".join(("Warning: More than one Principled BSDF so changed all P BSDF node Emission Strengths to", emission_strength, "!"))
-        bpy.ops.ueshaderscript.show_message(message = warning_message)
+        bpy.ops.codshaderscript.show_message(message = warning_message)
         log(warning_message)
         
 
@@ -3523,8 +3102,8 @@ def set_values_for_ImageUser(image_user, value_dict):
 
 
 #--------reset settings for load function main panel class
-class LOADUESHADERSCRIPT_OT_reset_settings_main_panel(bpy.types.Operator):
-    bl_idname = "loadueshaderscript.reset_settings_main_panel_operator"
+class LOADCODSHADERSCRIPT_OT_reset_settings_main_panel(bpy.types.Operator):
+    bl_idname = "loadcodshaderscript.reset_settings_main_panel_operator"
     bl_label = "Reset All Settings to Default"
     bl_description = "Reset Load Settings Main Panel for UEShaderScript"
     bl_options = {'REGISTER'}
@@ -3570,7 +3149,6 @@ class LOADUESHADERSCRIPT_OT_reset_settings_main_panel(bpy.types.Operator):
         pathtool.property_unset("alpha_color_space")
         pathtool.property_unset("emissions_color_space")
         pathtool.property_unset("height_color_space")
-        pathtool.property_unset("hair_gradient_color_space")
         pathtool.property_unset("specular_color_space")
         pathtool.property_unset("gloss_color_space")
         pathtool.property_unset("roughness_color_space")
@@ -3591,47 +3169,6 @@ class LOADUESHADERSCRIPT_OT_reset_settings_main_panel(bpy.types.Operator):
         pathtool.property_unset("sheen_color_space")
         pathtool.property_unset("glass_mask_color_space")
 
-        pathtool.property_unset("splat_color_space")
-        pathtool.property_unset("red_bc_color_space")
-        pathtool.property_unset("red_orm_color_space")
-        pathtool.property_unset("red_n_color_space")
-        pathtool.property_unset("red_e_color_space")
-        pathtool.property_unset("green_bc_color_space")
-        pathtool.property_unset("green_orm_color_space")
-        pathtool.property_unset("green_n_color_space")
-        pathtool.property_unset("green_e_color_space")
-        pathtool.property_unset("blue_bc_color_space")
-        pathtool.property_unset("blue_orm_color_space")
-        pathtool.property_unset("blue_n_color_space")
-        pathtool.property_unset("blue_e_color_space")
-        pathtool.property_unset("cyan_bc_color_space")
-        pathtool.property_unset("cyan_orm_color_space")
-        pathtool.property_unset("cyan_n_color_space")
-        pathtool.property_unset("cyan_e_color_space")
-        pathtool.property_unset("alpha_bc_color_space")
-        pathtool.property_unset("alpha_orm_color_space")
-        pathtool.property_unset("alpha_n_color_space")
-        pathtool.property_unset("alpha_e_color_space")
-        pathtool.property_unset("moss_bc_color_space")
-        pathtool.property_unset("moss_orm_color_space")
-        pathtool.property_unset("moss_mask_color_space")
-        pathtool.property_unset("leaves_bc_color_space")
-        pathtool.property_unset("leaves_orm_color_space")
-        pathtool.property_unset("leaves_mask_color_space")
-        pathtool.property_unset("dirt_bc_color_space")
-        pathtool.property_unset("dirt_orm_color_space")
-        pathtool.property_unset("dirt_mask_color_space")
-
-        pathtool.property_unset("tint_base_diffuse_color_space")
-        pathtool.property_unset("tint_mask_color_space")
-        pathtool.property_unset("tint_mask_2_color_space")
-        pathtool.property_unset("hair_tint_id_color_space")
-        
-        pathtool.property_unset("cust1_color_space")
-        pathtool.property_unset("cust2_color_space")
-        pathtool.property_unset("cust3_color_space")
-        pathtool.property_unset("cust4_color_space")
-
         pathtool.property_unset("non_match_color_space")
 
         #reset advanced settings as well in case
@@ -3641,28 +3178,28 @@ class LOADUESHADERSCRIPT_OT_reset_settings_main_panel(bpy.types.Operator):
 
 
 
-#don't register LOADUESHADERSCRIPT_shared_main_panel
+#don't register LOADCODSHADERSCRIPT_shared_main_panel
 #because that is not a bpy class and trying to register
 #something that is not a panel or bpy class will result in an error
 classes = [PathProperties, 
 
-LOADUESHADERSCRIPT_PT_select_preset_main_panel_1,
+LOADCODSHADERSCRIPT_PT_select_preset_main_panel_1,
 
-LOADUESHADERSCRIPT_PT_load_settings_main_panel_2, LOADUESHADERSCRIPT_PT_alpha_emissive_main_panel_3, 
-LOADUESHADERSCRIPT_PT_color_space_main_panel_4, LOADUESHADERSCRIPT_PT_advanced_settings_main_panel_5,
-LOADUESHADERSCRIPT_PT_reset_settings_main_panel_6, 
+LOADCODSHADERSCRIPT_PT_load_settings_main_panel_2, LOADCODSHADERSCRIPT_PT_alpha_emissive_main_panel_3, 
+LOADCODSHADERSCRIPT_PT_color_space_main_panel_4, LOADCODSHADERSCRIPT_PT_advanced_settings_main_panel_5,
+LOADCODSHADERSCRIPT_PT_reset_settings_main_panel_6, 
 
-LOADUESHADERSCRIPT_PT_load_methods_main_panel_7,
-LOADUESHADERSCRIPT_PT_solo_material_main_panel_8,
-LOADUESHADERSCRIPT_PT_custom_denoise_main_panel_9, 
+LOADCODSHADERSCRIPT_PT_load_methods_main_panel_7,
+LOADCODSHADERSCRIPT_PT_solo_material_main_panel_8,
+LOADCODSHADERSCRIPT_PT_custom_denoise_main_panel_9, 
 
-LOADUESHADERSCRIPT_OT_solo_material, LOADUESHADERSCRIPT_OT_solo_material_all,
-LOADUESHADERSCRIPT_OT_use_nodes_mesh, LOADUESHADERSCRIPT_OT_use_nodes_mesh_all,
+LOADCODSHADERSCRIPT_OT_solo_material, LOADCODSHADERSCRIPT_OT_solo_material_all,
+LOADCODSHADERSCRIPT_OT_use_nodes_mesh, LOADCODSHADERSCRIPT_OT_use_nodes_mesh_all,
 
-LOADUESHADERSCRIPT_OT_cust_denoise_blender_3_0_plus, LOADUESHADERSCRIPT_OT_cust_denoise_blender_2_93_below,
+LOADCODSHADERSCRIPT_OT_cust_denoise_blender_3_0_plus, LOADCODSHADERSCRIPT_OT_cust_denoise_blender_2_93_below,
 
-LOADUESHADERSCRIPT_OT_add_to_one_material, LOADUESHADERSCRIPT_OT_add_to_multiple_materials, 
-LOADUESHADERSCRIPT_OT_add_to_selected_meshes, LOADUESHADERSCRIPT_OT_reset_settings_main_panel]
+LOADCODSHADERSCRIPT_OT_add_to_one_material, LOADCODSHADERSCRIPT_OT_add_to_multiple_materials, 
+LOADCODSHADERSCRIPT_OT_add_to_selected_meshes, LOADCODSHADERSCRIPT_OT_reset_settings_main_panel]
  
 def register():
     for cls in classes:
