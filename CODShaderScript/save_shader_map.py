@@ -2469,7 +2469,7 @@ class SAVECODSHADERSCRIPT_OT_reset_inputs_main_panel(bpy.types.Operator):
         savetool.property_unset("sheen_suffix")
         savetool.property_unset("sheen_node_name")
         savetool.property_unset("glass_mask_suffix")
-        savetool.property_unset("glass_mask_suffix")
+        savetool.property_unset("glass_mask_node_name")
 
         #tint texture inputs
         savetool.property_unset("is_show_tint_textures")

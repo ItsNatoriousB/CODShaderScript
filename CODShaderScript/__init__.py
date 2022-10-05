@@ -25,7 +25,7 @@ bl_info = {
     "name": "CODShaderScript - Load Save COD Shader Map Setups",
     "author": "NatoriousB",
     "version": (0, 0, 1),
-    "blender": (3, 3, 0),
+    "blender": (3, 0, 0),
     "location": "3D View > Properties > Load COD Shaders + Shader Editor > Properties > Save COD Shaders",
     "description": "Adds the ability to save and load shader maps and textures for Meshes and adds default preset shader maps",
     "warning": "",
@@ -47,15 +47,13 @@ def register():
 
     #import_current_or_default_json will cause an error when blender first starts
     #this is because you cannot run the function bpy.ops.wm.save_userpref() inside save_pref()
-    #as blender cannot allow
-    #to access bpy.ops when file starts when blender just starts
+    #as blender cannot allow access to bpy.ops when file starts when blender just starts
     #however, this will still load the json file to the current add on preferences for the current file
     #it will just not load them to the default add on preferences until the user has made a change in the Save UE Shaders Panel
     #then blender will allow access to bpy.ops and the changes will save to the default add on preferences
     #for all files
 
-    #import_current_or_default_json here is also used when the add on 
-    #is being re enabled in the Edit > Preferences > Add Ons panel
+    #import_current_or_default_json here is also used when the add on is being re-enabled in the Edit > Preferences > Add Ons panel
     #and in this case you have access to bpy.ops because blender is already open
     #therefore, changes will happen to the current preferences and default preferences
     try:
@@ -64,8 +62,7 @@ def register():
         print("import_current_or_default_json() exception because blender is not ready yet. :", e)
     
     #you cannot run the function bpy.ops.wm.save_userpref() inside save_pref()
-    #as blender cannot allow
-    #to access bpy.ops when file starts when blender just starts
+    #as blender cannot allow access to bpy.ops when file starts when blender just starts
     #however, this will still reset and update the json file to the current add on preferences for the current file
     #it will just not update the presets to the default add on preferences until the user has made a change in the Save UE Shaders Panel
     #then blender will allow access to bpy.ops and the changes will save to the default add on preferences

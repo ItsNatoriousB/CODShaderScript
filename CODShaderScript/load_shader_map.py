@@ -943,7 +943,7 @@ def create_multiple_materials_shader_maps(context, pathtool, time_start):
                 #print the time taken to finish creating shader maps
                 #don't use log so can use new line characters
                 #this is inside all the checks because we only print finished if an error hasn't occcured
-                print("\n\n\n[UE Shader Script]: Finished create_multiple_materials_shader_maps in: %.4f sec" % (time.time() - time_start), "\n\n\n")
+                print("\n\n\n[COD Shader Script]: Finished create_multiple_materials_shader_maps in: %.4f sec" % (time.time() - time_start), "\n\n\n")
             
 
             #if the active object type is not a mesh
@@ -1062,7 +1062,7 @@ def create_selected_meshes_shader_maps(context, pathtool, time_start):
         #print the time taken to finish creating shader maps
         #don't use log so can use new line characters
         #this is inside all the checks because we only print finished if an error hasn't occcured
-        print("\n\n\n[UE Shader Script]: Finished create_selected_meshes_shader_maps in: %.4f sec" % (time.time() - time_start), "\n\n\n")
+        print("\n\n\n[COD Shader Script]: Finished create_selected_meshes_shader_maps in: %.4f sec" % (time.time() - time_start), "\n\n\n")
     
     else:
         #error message if user has selected no meshes or objects
@@ -2394,8 +2394,6 @@ def change_colour_space(texture, node_to_load, pathtool):
         node_to_load.image.colorspace_settings.name = pathtool.ambient_occlusion_color_space
     elif texture == "detail_normal":
         node_to_load.image.colorspace_settings.name = pathtool.detail_n_color_space
-    elif texture == "world_position_offset":
-        node_to_load.image.colorspace_settings.name = pathtool.wpo_color_space
     elif texture == "tint":
         node_to_load.image.colorspace_settings.name = pathtool.tint_color_space
     elif texture == "normal_detail":
