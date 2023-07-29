@@ -30,7 +30,7 @@ CODShaderScript does three things:
 2. Open Blender and click Edit > Preferences > Add-Ons > Install > in the file explorer find "CODShaderScript_v.X.X.X.zip" and select it.
 3. In the Add-Ons search, search for COD Shader Maps and enable the Add On to complete the installation.
 
-### Prerequisite software
+### Requirements
 - Blender (3D Rendering) https://www.blender.org
 - IO_Model_SEModel by DTZxPorter (.SEModel addon for Blender) https://github.com/dtzxporter/io_model_semodel
 - Parasyte by Scobablula (Utility) https://wiki.codmods.com/docs/parasyte/index
